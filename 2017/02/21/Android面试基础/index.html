@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android面试基础 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇总结了一些Android面试常考到的面试题..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android面试基础">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/Android面试基础/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本篇总结了一些Android面试常考到的面试题..">
+<meta property="og:updated_time" content="2016-11-16T13:02:17.064Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android面试基础">
+<meta name="twitter:description" content="本篇总结了一些Android面试常考到的面试题..">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Android面试基础" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/Android面试基础/" class="article-date">
+  <time datetime="2017-02-21T06:02:08.972Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android面试/">Android面试</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android面试基础
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇总结了一些Android面试常考到的面试题..</p>
+<a id="more"></a>
+<h1 id="1、-Android中四大组件及其作用？"><a href="#1、-Android中四大组件及其作用？" class="headerlink" title="1、 Android中四大组件及其作用？"></a>1、 Android中四大组件及其作用？</h1><ol>
+<li>Activity：activity是用户和应用程序交互的窗口，一个activity相当于我们实际中的一个网页，当打开一个屏幕时，之前的那一个屏幕会被置为暂停状态，并且压入历史堆栈中，用户可以通过回退操作返回到以前打开过的屏幕。activity的生命周期：即“产生、运行、销毁”，但是这其中会调用许多方法onCreate（创建） 、onStart（激活）、onResume（恢复）、onPause（暂停）、onStop（停止）、onDestroy（销毁）、onRestart（重启）。 </li>
+</ol>
+<ol>
+<li><p>Service：Service是一种程序，它可以运行很长的时间，相当于后台的一个服务，通过startService(Intent service)可以启动一个Service，通过Context.bindService()可以绑定一个Service。 </p>
+</li>
+<li><p>BroadCastRecevicer：接受一种或者多种Intent作触发事件，接受相关消息，做一些简单处理，转换成一条Notification，统一了Android的事件广播模型。可以使用BroadcastReceiver来让应用对外一个外部的事件作出响应。Broadcast Receiver通过NotificationManager来通知用户这些事情发生了，BroadcastReceiver注册的有两种方式，一种是可以在AndroidManifest.xml中注册，另一种可以在运行时的代码中使用Context.registerReceiver()进行注册。用户还可以通过Context.sendBroadcast()将他们自己的intent broadcasts广播给其他的应用程序。 </p>
+</li>
+</ol>
+<ol>
+<li>Content provider：内容提供者，可通过它来共享自己的数据给外部调用，给第三方应用提供数据访问的接口。</li>
+</ol>
+<h1 id="2、ListView的优化方案？"><a href="#2、ListView的优化方案？" class="headerlink" title="2、ListView的优化方案？"></a>2、ListView的优化方案？</h1><ol>
+<li>tem布局，层级越少越好，使用hierarchyview工具查看优化。 </li>
+<li>复用convertView </li>
+<li>使用ViewHolder </li>
+<li>item中有图片时，异步加载 </li>
+<li>快速滑动时，不加载图片 </li>
+<li>item中有图片时，应对图片进行适当压缩 </li>
+<li>实现数据的分页加载</li>
+</ol>
+<hr>
+<ol>
+<li><p>如果自定义适配器，那么在getView方法中要考虑方法传进来的参数contentView是否为null，如果为null就创建contentView并返回，如果不为null则直接使用。在这个方法中尽可能少创建view。 </p>
+</li>
+<li><p>给contentView设置tag（setTag（）），传入一个viewHolder对象， 用于缓存要显示的数据，可以达到图像数据异步加载的效果。 </p>
+</li>
+</ol>
+<ol>
+<li>如果listview需要显示的item很多，就要考虑分页加载。比如一共要 显示100条或者更多的时候，我们可以考虑先加载20条，等用户拉到列表 底部的时候再去加载接下来的20条。分页加载还没学习。</li>
+</ol>
+<h1 id="3、Android中五种数据存储方式分别是什么？他们的特点？"><a href="#3、Android中五种数据存储方式分别是什么？他们的特点？" class="headerlink" title="3、Android中五种数据存储方式分别是什么？他们的特点？"></a>3、Android中五种数据存储方式分别是什么？他们的特点？</h1><pre><code>Android提供了五种存取数据的方式
+（1）SharedPreference，存放较少的五种类型的数据，只能在同一个包内使 
+用，生成XML的格式存放在设备中 
+(2) SQLite数据库，存放各种数据，是一个轻量级的嵌入式数据库 
+(3) File文件，通过读取写入方式生成文件存放数据 
+(4) ContentProvider，主要用于让其他应用程序使用保存的数据
+(5)通过网络获取数据和写入数据到网络存储空间
+</code></pre><h1 id="4、列举Android中的主要五种常用布局？"><a href="#4、列举Android中的主要五种常用布局？" class="headerlink" title="4、列举Android中的主要五种常用布局？"></a>4、列举Android中的主要五种常用布局？</h1><pre><code>最常用的布局有以下这几种： 
+第一种：帧布局（框架布局）FrameLayout 
+第二种：线性布局LinearLayout 
+第三种：绝对布局AbsoluteLayout 
+第四种：相对布局RelativeLayout
+第五种：表格布局TableLayout
+</code></pre><h1 id="5、叙述学过的系统提供的Adapter？说明自定义Adapter与系统Adapter的区别？"><a href="#5、叙述学过的系统提供的Adapter？说明自定义Adapter与系统Adapter的区别？" class="headerlink" title="5、叙述学过的系统提供的Adapter？说明自定义Adapter与系统Adapter的区别？"></a>5、叙述学过的系统提供的Adapter？说明自定义Adapter与系统Adapter的区别？</h1><p>采用ArrayAdapter、SimpleAdapter和SimpleCursorAdapter这些系统自带的适配器，对于事件的响应只能局限在一个行单位。 假设一行里面有一个按钮控件，它们之间的响应操作是不一样的。若采用系统自带的适配器，就不能精确到每个控件的响应事件。这时，我们一般采取自定义适配器来实现这个比较精确地请求。</p>
+<h1 id="6、Android中asset文件夹和raw文件夹区别？"><a href="#6、Android中asset文件夹和raw文件夹区别？" class="headerlink" title="6、Android中asset文件夹和raw文件夹区别？"></a>6、Android中asset文件夹和raw文件夹区别？</h1><p>res/raw和assets的相同点： </p>
+<p>两者目录下的文件在打包后会原封不动的保存在apk包中，不会被编译成二进制。 </p>
+<p>res/raw和assets的不同点：</p>
+<p>（1）res/raw中的文件会被映射到R.Java文件中，访问的时候直接使用资源ID即 R.raw.filename；assets文件夹下的文件不会被映射到R.java中，访问的时候需要AssetManager类。 </p>
+<p>（2）res/raw不可以有目录结构，而assets则可以有目录结构，也就是assets目录下可以再建立文件夹 </p>
+<p>（3）读取文件资源举例：<br>    读取res/raw下的文件资源，通过以下方式获取输入流来进行写操作<br>    InputStream is = getResources().openRawResource(R.raw.filename);<br>    读取assets下的文件资源，通过以下方式获取输入流来进行写操作<br>    AssetManager am = null;<br>    am = getAssets();<br>    InputStream is = am.open(“filename”);</p>
+<h1 id="7、显式Intent和隐式Intent区别？"><a href="#7、显式Intent和隐式Intent区别？" class="headerlink" title="7、显式Intent和隐式Intent区别？"></a>7、显式Intent和隐式Intent区别？</h1><p>Intent是一种在不同组件之间传递的请求消息，是应用程序发出的请求和意图。对于明确指出了目标组件名称的Intent，我们称之为显式Intent。对于没有明确指出目标组件名称的Intent，则称之为隐式Intent。Android系统使用IntentFilter 来寻找与隐式Intent相关的对象。</p>
+<p>显式Intent直接用组件的名称定义目标组件，这种方式很直接。但是由于开发人员往往并不清楚别的应用程序的组件名称，因此，显式Intent更多用于在应用程序内部传递消息。比如在某应用程序内，一个Activity启动一个Service。<br>隐式Intent恰恰相反，它不会用组件名称定义需要激活的目标组件，它更广泛地用于在不同应用程序之间传递消息。</p>
+<h1 id="8、简要描述AIDL的实现步骤？"><a href="#8、简要描述AIDL的实现步骤？" class="headerlink" title="8、简要描述AIDL的实现步骤？"></a>8、简要描述AIDL的实现步骤？</h1><h3 id="服务器端："><a href="#服务器端：" class="headerlink" title="服务器端："></a>服务器端：</h3><pre><code>1:服务器端写AIDL 
+2:服务器端继承Service，重写3个方法 
+3：服务器端实例化一个AIDL定义接口的Stub对象，并实现接口的抽象方法； 
+4：配置文件 
+</code></pre><h3 id="客户端："><a href="#客户端：" class="headerlink" title="客户端："></a>客户端：</h3><pre><code>1：拷贝AIDL文件 
+2：绑定与Service端的服务 
+3：实现ServiceConnection，在实现的过程中通过Service端传递过来的IBinder得到Stub对象；例如：接口名.Stub.asInterface(service); 
+4：通过Stub对象调用相应方法
+</code></pre><h1 id="9、-谈谈Service的生命周期-以及两种方式的区别？"><a href="#9、-谈谈Service的生命周期-以及两种方式的区别？" class="headerlink" title="9、 谈谈Service的生命周期,以及两种方式的区别？"></a>9、 谈谈Service的生命周期,以及两种方式的区别？</h1><p>Service的生命周期由使用Service两种方式决定，启动方式不同生命周期不同。</p>
+<pre><code>（1）Start方式启动Service的生命周期: 
+onCreate()—onStartCommond()—onDestroy() 
+调用者和服务之间没有任何的联系，即使调用者退出，那么服务也仍然进行。 
+（2）Bind方式启动Service的生命周期：onCreate()-&gt;onBind()-&gt;–&gt;onUnbind() -&gt; onDestroy() 
+调用者和服务绑定在一起，调用者退出，服务即便退出。
+</code></pre><h1 id="10、-叙述学过的系统提供的Adapter（说明自定义Adapter与系统Adapter的区别）？"><a href="#10、-叙述学过的系统提供的Adapter（说明自定义Adapter与系统Adapter的区别）？" class="headerlink" title="10、 叙述学过的系统提供的Adapter（说明自定义Adapter与系统Adapter的区别）？"></a>10、 叙述学过的系统提供的Adapter（说明自定义Adapter与系统Adapter的区别）？</h1><p>采用ArrayAdapter、SimpleAdapter和SimpleCursorAdapter这些系统自带的适配器，对于事件的响应只能局限在一个行单位。假设一行里面有一个按钮控件，它们之间的响应操作是不一样的。若采用系统自带的适配器，就不能精确到每个控件的响应事件。这时，我们一般采取自定义适配器来实现这个比较精确地请求。</p>
+<h1 id="11、写出ListView优化的代码，已知自定义ListView中自定义布局文件为list-item-xml里面有ImageView和TextView两个组件，其id为item-image、item-text。"><a href="#11、写出ListView优化的代码，已知自定义ListView中自定义布局文件为list-item-xml里面有ImageView和TextView两个组件，其id为item-image、item-text。" class="headerlink" title="11、写出ListView优化的代码，已知自定义ListView中自定义布局文件为list_item.xml里面有ImageView和TextView两个组件，其id为item_image、item_text。"></a>11、写出ListView优化的代码，已知自定义ListView中自定义布局文件为list_item.xml里面有ImageView和TextView两个组件，其id为item_image、item_text。</h1><pre><code>public View getView(int position, View convertView, ViewGroup parent) {  
+ViewHolder viewHolder;  
+if(convertView==null){  
+    viewHolder=new ViewHolder();  
+    convertView=LayoutInflater.from(c).inflate(R.layout.list_item, null);  
+    viewHolder.text=(TextView) convertView.findViewById(R.id.item_text);  
+    viewHolder.image=(ImageView) convertView.findViewById(R.id.item_image);  
+    convertView.setTag(viewHolder);  
+}  
+viewHolder=(ViewHolder) convertView.getTag();  
+viewHolder.text.setText(list.get(position).getText());  
+viewHolder.image.setImageResource(list.get(position).getImage());  
+return convertView;  
+}  
+static class ViewHolder{  
+TextView text;  
+ImageView image;  
+}  
+</code></pre><h1 id="12、-描述通过contentResolver获取ContentProvider内容的基本步骤-？"><a href="#12、-描述通过contentResolver获取ContentProvider内容的基本步骤-？" class="headerlink" title="12、　描述通过contentResolver获取ContentProvider内容的基本步骤 ？"></a>12、　描述通过contentResolver获取ContentProvider内容的基本步骤 ？</h1><pre><code>第一:得到ContentResolver类对象 
+ContentResolver cr=getContentResolver(); 
+第二：定义要查询的字段String数组 
+第三：使用cr.query();返回一个Cursor对象 
+第四：使用while循环得到Cursor里面的内容
+</code></pre><h1 id="13、-描述一下自定义ContentProvider的步骤。"><a href="#13、-描述一下自定义ContentProvider的步骤。" class="headerlink" title="13、　描述一下自定义ContentProvider的步骤。"></a>13、　描述一下自定义ContentProvider的步骤。</h1><p>###自定义contentprovider步骤<br>    1)继承Android的ContentProvider基类实现自己的ContentProvider类。<br>    2)实现 ContentProvider里的onCreate方法，创建provider的数据，一般为数据库sqlite，那么我们在onCreate里实例化一个SqliteOpenHelper。<br>    3)在ContentProvider 里面重写insert/delete/update/query增删改查这些方法。在每个方法里面实现相应的功能。<br>    4)在AndroidManifest.xml文件中注册该ContentProvider类，为ContentProvider指定Uri。</p>
+<h1 id="14、-如何实现一个帧动画"><a href="#14、-如何实现一个帧动画" class="headerlink" title="14、 如何实现一个帧动画?"></a>14、 如何实现一个帧动画?</h1><pre><code>在布局文件中添加ImageView组件，设置background为res/anim/fram.xml动画效果 
+通过ImageView对象的getBackground()方法得到AnimationDrawable对象 
+通过AnimationDrawable对象的start()来启动帧动画，stop()来停止动画
+</code></pre><h1 id="15、-res-raw与assets目录的区别？"><a href="#15、-res-raw与assets目录的区别？" class="headerlink" title="15、 res/raw与assets目录的区别？"></a>15、 res/raw与assets目录的区别？</h1><h3 id="相同点："><a href="#相同点：" class="headerlink" title="相同点："></a>相同点：</h3><pre><code>两者都会原封不动的保存在apk包中，不会被编译成二进制码。 
+</code></pre><h3 id="不同点："><a href="#不同点：" class="headerlink" title="不同点："></a>不同点：</h3><pre><code>1、raw目录下只能存放文件，不能存放下一级的文件夹，而assets可以存放下一级的文件夹。 
+2、raw目录下的资源会映射到R.java中生成资源id。而assets不会。 
+3、获得资源的方法不同。代码如下： 
+this.getAssets().open(“xml/channels.xml”) 
+this.getResources().openRawResource(R.raw.students) 
+this.getClassLoader().getResourceAsStream(“student.xml”)
+</code></pre><h1 id="16、-简述Handler机制原理？"><a href="#16、-简述Handler机制原理？" class="headerlink" title="16、 简述Handler机制原理？"></a>16、 简述Handler机制原理？</h1><p>Andriod提供了 Handler 和 Looper 来满足线程间的通信。</p>
+<pre><code>Android不允许UI线程之外的线程改变UI组件的值，所以要想在其他线程里面改变UI组件的值，必须使用Handler来实现。
+Looper: 一个线程可以产生一个Looper对象，由它来管理此线程里的Message Queue(消息队列)。
+Handler: 你可以构造Handler对象来与Looper沟通，以便push(上传)新消息到Message Queue里;或者接收Looper从Message Queue取出的消息。
+Message Queue(消息队列，特点：先进先出):用来存放线程放入的消息。
+线程：UI thread 通常就是main thread，而Android启动程序时会替它建立一个Message Queue。
+Handler、Looper、MessageQueue的初始化流程如下所示。
+Hander持有对UI主线程消息队列UI_MQ和消息循环Looper的引用，子线程可以通过Handler将消息发送到UI线程的消息队列UI_MQ中。
+Handler处理消息
+UI主线程通过Looper循环查询消息队列UI_MQ，当发现有消息存在时会将消息从消息队列中取出。首先分析消息，通过消息的参数判断该消息对应的Handler，然后将消息分发到指定的Handler进行处理。
+</code></pre><h1 id="17、在android中如何使用SqliteOpenHelper"><a href="#17、在android中如何使用SqliteOpenHelper" class="headerlink" title="17、在android中如何使用SqliteOpenHelper?"></a>17、在android中如何使用SqliteOpenHelper?</h1><pre><code>1、建立一个类继承SqliteOpenHelper，声明一个构造方法，参数包括(Context,name,CursorFactory,version)；创建数据库 
+2、实现其oncreate() 创建表 
+3：通过onupgrade() 版本号更新时执行； 
+4、实例化所建类对象，对其进行读写操作，执行sql语句创建数据库（当对其使用读写时会判断数据库是否存在，如果存在，则不执行oncreate，不存在则执行）。
+</code></pre><h1 id="18、使用SqliteOpenHelper和SqliteDatabase进行增删改查具体的方法和参数？"><a href="#18、使用SqliteOpenHelper和SqliteDatabase进行增删改查具体的方法和参数？" class="headerlink" title="18、使用SqliteOpenHelper和SqliteDatabase进行增删改查具体的方法和参数？"></a>18、使用SqliteOpenHelper和SqliteDatabase进行增删改查具体的方法和参数？</h1><pre><code>1、通过SqliteOpenHelper得到SqliteDataBase的实例化对象（分为读写两种）； 
+2、调用execSQL（）执行增删改的SQL语句,传入SQL语句及需要填充的参数； 
+调用Cursor cursor = rawQuery（）执行查询的语句 
+3、对执行SQL语句返回的游标，进行遍历； 
+4、及时关闭SqliteDataBase。
+</code></pre><h1 id="19、Sqlite和sharedPreference的区别"><a href="#19、Sqlite和sharedPreference的区别" class="headerlink" title="19、Sqlite和sharedPreference的区别"></a>19、Sqlite和sharedPreference的区别</h1><p>（1）Sqlite是嵌入式SQL数据库引擎SQLite（SQLite Embeddable SQL Database Engine）的一个扩展。SQLite是一个实现嵌入式SQL数据库引擎的 C语言库（C library）。用SQLite连接的程序可以使用SQL数据库，但不需要运行一个单独的关系型数据库管理系统进程（separate RDBMS process）。SQLite直接读写（reads and writes directly）在硬盘上的数据库文件。 </p>
+<p>（2）SharedPreferences也是一种轻型的数据存储方式，它的本质是基于XML文件存储key-value键值对数据，通常用来存储一些简单的配置信息。其存储位置在/data/data/&lt;包名&gt;/shared_prefs目录下。SharedPreferences对象本身只能获取数据而不支持存储和修改，存储修改是通过Editor对象实现。</p>
+<h1 id="20、为什么要用ContentProvider-它与sql在实现上有何区别"><a href="#20、为什么要用ContentProvider-它与sql在实现上有何区别" class="headerlink" title="20、为什么要用ContentProvider?它与sql在实现上有何区别"></a>20、为什么要用ContentProvider?它与sql在实现上有何区别</h1><pre><code>Sql只能在该工程的内部共享数据，ContentProvider能在工程之间实现数据共享。
+</code></pre><h1 id="21、描述ContentProvider-URI有哪几部分组成"><a href="#21、描述ContentProvider-URI有哪几部分组成" class="headerlink" title="21、描述ContentProvider URI有哪几部分组成"></a>21、描述ContentProvider URI有哪几部分组成</h1><p>URI由是部分组成：<br>content://com.example.transportation/trains/122</p>
+<p>A，标准的前缀: ContentProvider（内容提供者）的scheme已经由Android所规定， scheme为：content:// </p>
+<p>B，唯一标识整个Content Provider: 主机名（或叫Authority）用于唯一标识这个ContentProvider，外部调用者可以根据这个标识来找到它。 </p>
+<p>C，描述了数据的路径，确定返回哪类数据: 路径（path）可以用来表示我们要操作的数据，路径的构建应根据业务而定 </p>
+<p>D，ID唯一标注请求的数据: 我们要请求数据的ID</p>
+<h1 id="22、如何通过contentResolver扫描sdcard所有多媒体文件？"><a href="#22、如何通过contentResolver扫描sdcard所有多媒体文件？" class="headerlink" title="22、如何通过contentResolver扫描sdcard所有多媒体文件？"></a>22、如何通过contentResolver扫描sdcard所有多媒体文件？</h1><pre><code>1) 通过ContentResolver访问系统多媒体提供的ContentProvider,得到多媒体音乐的cursor 
+2) 解析cursor，通过cursor得到对应文件列表 
+3) 设置listView,根据格式不同展示不同图片，进行使用
+</code></pre><p>#23、.描述一下开发ContentProvider的步骤</p>
+<h3 id="自定义contentprovider步骤"><a href="#自定义contentprovider步骤" class="headerlink" title="自定义contentprovider步骤"></a>自定义contentprovider步骤</h3><pre><code>继承Android的ContentProvider基类实现自己的ContentProvider类。
+实现 ContentProvider里的onCreate方法，创建provider的数据，一般为数据库sqlite，那么我们在onCreate里实例化一个SqliteOpenHelper。
+在ContentProvider 里面重写insert/delete/update/query增删改查这些方法。在每个方法里面实现相应的功能。
+在AndroidManifest.xml文件中注册该ContentProvider类，为ContentProvider指定Uri。
+</code></pre><h1 id="24、-Android中如何访问自定义ContentProvider"><a href="#24、-Android中如何访问自定义ContentProvider" class="headerlink" title="24、.Android中如何访问自定义ContentProvider?"></a>24、.Android中如何访问自定义ContentProvider?</h1><pre><code>1：得到ContentResolver类对象：ContentResolver cr = getContentResolver（）； 
+2：定义要查询的字段String数组。 
+3：使用cr.query(URI,字段数组，null， null，null);，返回一个Cursor对象。 
+4：使用while循环得到Cursor里面的内容。
+</code></pre><h1 id="25、-Android中五种数据存储方式分别是什么？他们的特点？"><a href="#25、-Android中五种数据存储方式分别是什么？他们的特点？" class="headerlink" title="25、 Android中五种数据存储方式分别是什么？他们的特点？"></a>25、 Android中五种数据存储方式分别是什么？他们的特点？</h1><p>###Android提供了五种存取数据的方式</p>
+<pre><code>(1)SharedPreference，存放较少的五种类型的数据，只能在同一个包内使用，生成XML的格式存放在设备中 
+(2) SQLite数据库，存放各种数据，是一个轻量级的嵌入式数据库 
+(3) File文件，通过读取写入方式生成文件存放数据 
+(4) ContentProvider，主要用于让其他应用程序使用保存的数据 
+(5)通过网络获取数据和写入数据到网络存储空间
+</code></pre><h1 id="26、-android中的动画有哪几类，它们的特点和区别是什么？"><a href="#26、-android中的动画有哪几类，它们的特点和区别是什么？" class="headerlink" title="26、 android中的动画有哪几类，它们的特点和区别是什么？"></a>26、 android中的动画有哪几类，它们的特点和区别是什么？</h1><p>###Android中动画可以分为两大类：帧动画、补间动画<br>    1）补间动画：（你定义一个开始和结束，中间的部分由程序运算得到。就是对场景里的对象不断的进行图像变化来产生动画效果（旋转、平移、放缩和渐变））AlphaAnimation（渐变型动画）、scaleAnimation（缩放型动画）、 TranslateAnimation（平移型动画）、 RotateAnimation（旋转型动画）、<br>    2）逐帧动画：Frame（把一连串的图片进行系列化连续播放，如同放电影的效果），它是通过播放一张一张图片来达到动画的效果；</p>
+<h1 id="27、、-补间动画的两种实现方式-四种可选择一种来举例"><a href="#27、、-补间动画的两种实现方式-四种可选择一种来举例" class="headerlink" title="27、、 补间动画的两种实现方式(四种可选择一种来举例)"></a>27、、 补间动画的两种实现方式(四种可选择一种来举例)</h1><h3 id="1、XML配置"><a href="#1、XML配置" class="headerlink" title="1、XML配置:"></a>1、XML配置:</h3><pre><code>1)在res/anim文件夹下配置动画对应标签，配置对应参数，包含初始值，动画结束值，以及动画时间 
+2)通过AnimationUtils.loadAnimation加载XML动画文件 
+3)调用startAnimation方法开启动画 
+</code></pre><h3 id="2、代码实现"><a href="#2、代码实现" class="headerlink" title="2、代码实现:"></a>2、代码实现:</h3><pre><code>1)直接New出需要的补间动画的对象，传递相应的参数 
+2)调用startAnimation方法开启动画
+</code></pre><h1 id="28、-如何用MediaPlayer实现音频播放功能，音乐播放器的开发需注意什么？"><a href="#28、-如何用MediaPlayer实现音频播放功能，音乐播放器的开发需注意什么？" class="headerlink" title="28、 如何用MediaPlayer实现音频播放功能，音乐播放器的开发需注意什么？"></a>28、 如何用MediaPlayer实现音频播放功能，音乐播放器的开发需注意什么？</h1><p>###用MediaPlayer实现音频播放功能主要有两种方法。</p>
+<p>（方法一）:在res下建立一个raw包，把文件放入包中。在activity中声明<br>一个MediaPlayer对象，然后onCreate()方法中用<br>MediaPlayer.create(context,R.raw.资源名)方法实例化该对象。然后调用<br>MediaPlayer的start()、pause()和stop()方法进行开始、暂停和停止的<br>操作。最后在activity的onDestroy()中调用MediaPlayer的release()<br>方法进行资源的释放。此方法的缺点是每次运行程序时都要加载raw里的资<br>源文件，使安装过程速度减慢。 </p>
+<p>（方法二）:资源放在sdcard中。在activity中声明一个MediaPlayer对象，<br>实例化 MediaPlayer()。使用Environment.getExternalStorageDirectory().getAbsolutePath()方法获得path，然后path+=File.separator+资源名或”包名/资源名”。然后调用MediaPlayer的setDataSource(path)进行资源设置。然后先调用prepare()方法，在后再调用start()方法播放，调用pause()方法和stop()方法进行暂停和停止的操作。最后在activity的onDestroy()中用release()方法进行资源的释放。</p>
+<p>注意事项，使用方法二时，设置完资源路径后要先调用prepare()方法，调<br>用start()、pause()、stop()方法前腰先进行一些判断，不然一次性调用<br>多次同样的方法容易出错。调用stop()后在调用start()方法时要先调用prepare()方法。</p>
+<h1 id="29、-Android中播放小的音乐文件soundpool如何使用？"><a href="#29、-Android中播放小的音乐文件soundpool如何使用？" class="headerlink" title="29、 Android中播放小的音乐文件soundpool如何使用？"></a>29、 Android中播放小的音乐文件soundpool如何使用？</h1><p>###SoundPlayer 播放音频的实现步骤：</p>
+<pre><code>1) new出一个实例 ; new SoundPool(4, AudioManager.STREAM_MUSIC, 100);第一个参数是允许有多少个声音流同时播放,第2个参数是声音类型,第三个参数是声音的品质; 
+2) loadId = soundPool.load(context, R.raw.himi_ogg, 1); 
+3) 使用实例调用play方法传入对应的音频文件id即可
+</code></pre><h1 id="30、-Android中视频播放的三种方式？"><a href="#30、-Android中视频播放的三种方式？" class="headerlink" title="30、 Android中视频播放的三种方式？"></a>30、 Android中视频播放的三种方式？</h1><h3 id="1、系统自带android视频播放-最简单的视频播放器"><a href="#1、系统自带android视频播放-最简单的视频播放器" class="headerlink" title="1、系统自带android视频播放(最简单的视频播放器)"></a>1、系统自带android视频播放(最简单的视频播放器)</h3><pre><code>1) new Intent，配置隐式意图 
+2) 通过Uri.parse获取指定文件Uri 
+3) 给Intent添加Uri及type 
+4) 启动Intent
+</code></pre><h3 id="2、VideoView-android提供给我们的一个供我们进行视频播放的组件"><a href="#2、VideoView-android提供给我们的一个供我们进行视频播放的组件" class="headerlink" title="2、VideoView android提供给我们的一个供我们进行视频播放的组件"></a>2、VideoView android提供给我们的一个供我们进行视频播放的组件</h3><pre><code>VideoView 是android 系统提供的一个媒体播放显示和控制的控件。 
+若需要控制栏，需要加上MediaController
+</code></pre><h3 id="3、surfaceView-MediaPlayer"><a href="#3、surfaceView-MediaPlayer" class="headerlink" title="3、surfaceView+MediaPlayer"></a>3、surfaceView+MediaPlayer</h3><pre><code>1) 构建surfaceView 
+2) 获取surfaceHolder,设置分辨率 
+3) 对surfaceHolder添加回调接口(SurfaceHolder.Callback ) surfaceHolder.addCallback(this); 
+4) 实现接口内部三个方法 
+(surfaceCreated ,surfaceChanged,surfaceDestroyed等)，对Mediaplayer添加Display（控制管理器） 
+5) 对按钮添加点击事件
+</code></pre><h1 id="31、-Timer及AlertManager"><a href="#31、-Timer及AlertManager" class="headerlink" title="31、 Timer及AlertManager"></a>31、 Timer及AlertManager</h1><p>Timer是在一个应用运行期间进行的定时操作，当应用退出则定时操作也同时被取消。</p>
+<p>AlarmManager是系统级的定时器，主要用来对Activity,Service,BroadCastReciver三大组件进行定时的操作，当应用退出后这个定时操作仍然可以按时进行，并且通过使用可唤醒的参数可以达到在系统休眠状态下仍可以完成定时操作。</p>
+<h1 id="32、Android中拍照功能如何实现？"><a href="#32、Android中拍照功能如何实现？" class="headerlink" title="32、Android中拍照功能如何实现？"></a>32、Android中拍照功能如何实现？</h1><h3 id="有两种方法实现拍照功能："><a href="#有两种方法实现拍照功能：" class="headerlink" title="有两种方法实现拍照功能："></a>有两种方法实现拍照功能：</h3><h4 id="1、通过camera打开照相机进行拍照调用系统camera执行拍照："><a href="#1、通过camera打开照相机进行拍照调用系统camera执行拍照：" class="headerlink" title="1、通过camera打开照相机进行拍照调用系统camera执行拍照："></a>1、通过camera打开照相机进行拍照调用系统camera执行拍照：</h4><pre><code>1）、首先创建surfaceView 
+2）、得到surfaceView对应控制器，并添加surfaceView的回调事件（surfaceView创建以及销毁分别执行的操作,当surfaceView创建时，初始化camera,当surfaceView销毁时，释放camera的资源） 
+3）、设置分辨率 
+4）、设置不维护缓存 
+5) 点击调用camera的takePicture传入回调拍照的实例化PictureCallback对象 
+</code></pre><h4 id="2、系统拍照-通过Intent启动，设置ACTION-IMAGE-CAPTURE-startActivity开启"><a href="#2、系统拍照-通过Intent启动，设置ACTION-IMAGE-CAPTURE-startActivity开启" class="headerlink" title="2、系统拍照:通过Intent启动，设置ACTION_IMAGE_CAPTURE,startActivity开启"></a>2、系统拍照:通过Intent启动，设置ACTION_IMAGE_CAPTURE,startActivity开启</h4><h1 id="33、ListView的优化方案？"><a href="#33、ListView的优化方案？" class="headerlink" title="33、ListView的优化方案？"></a>33、ListView的优化方案？</h1><p>1:判断contentView是否为null </p>
+<p>2：使用viewHolder缓存数据，实现一步加载</p>
+<p>3：分页加载:</p>
+<p>1)如果自定义适配器，那么在getView方法中要考虑方法传进来的参数contentView是否为null，如果为null就创建contentView并返回，如果不为null则直接使用。在这个方法中尽可能少创建view。 </p>
+<p>2)给contentView设置tag（setTag（）），传入一个viewHolder对象，用于缓存要显示的数据，可以达到数据异步加载的效果。 </p>
+<p>3)如果listview需要显示的item很多，就要考虑分页加载。比如一共要显示100条或者更多的时候，我们可以考虑先加载20条，等用户拉到列表底部的时候再去加载接下来的20条。分页加载还没学习。</p>
+<h1 id="34、-MVC设计模式在Android中的应用？"><a href="#34、-MVC设计模式在Android中的应用？" class="headerlink" title="34、 MVC设计模式在Android中的应用？"></a>34、 MVC设计模式在Android中的应用？</h1><p>1.模型层（model）:对数据库操作，对网络等操作都应在model中处理，对业务的计算等操作都应在该层。可以简单的理解为Android中的Java源文件 </p>
+<p>2.视图层（view）:一般采用XML进行描述，使用的时候可以方便的引入，可以简单的理解为Android中Layout文件。 Android中也可以用JavaScript+HTML 等方式作为view 层。 </p>
+<p>3.控制层（controller）:控制model和view的协调工作。简单的理解为Android中manifest文件。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/Android面试基础/" data-id="cizf6sz7w000yloo5v2kpqwr3" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/博客/">博客</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/面试/">面试</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/Android面试进阶/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Android面试进阶
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/21/Android开发高级进阶（二）—多线程（实现简单下载器）/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Android开发高级进阶（二）—多线程（实现简单下载器）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android-Studio/">Android Studio</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android案例/">Android案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android知识点/">Android知识点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android第三方库/">Android第三方库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android重点/">Android重点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android错误/">Android错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android面试/">Android面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bmob/">Bmob</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSDN博客/">CSDN博客</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Handler/">Handler</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo教程/">Hexo教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Http/">Http</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java面试/">Java面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Jsoup/">Jsoup</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Looper/">Looper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OOM解决方案/">OOM解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RxJava/">RxJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/命令总结/">命令总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/堆和栈/">堆和栈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/学习辅助工具/">学习辅助工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/常见错误/">常见错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/百度地图/">百度地图</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存机制/">缓存机制</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解决方案/">解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/项目SDK/">项目SDK</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-Studio/">Android Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android加载图片/">Android加载图片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android错误/">Android错误</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android面试/">Android面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bmob/">Bmob</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客/">CSDN博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fragment/">Fragment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Handler/">Handler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Http/">Http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsoup/">Jsoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Looper/">Looper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVC/">MVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDownPad2/">MarkDownPad2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OkHttp/">OkHttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RxJava/">RxJava</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sqlite/">Sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Studio/">Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View绘制/">View绘制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/assets/">assets</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlite/">sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下拉-上拉刷新/">下拉/上拉刷新</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/个推/">个推</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆和栈/">堆和栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/快捷键/">快捷键</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注册码/">注册码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/状态栏/">状态栏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统分享/">系统分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程/">线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络协议/">网络协议</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义/">自定义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义栏目/">自定义栏目</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 12.5px;">Android Studio</a> <a href="/tags/Android加载图片/" style="font-size: 10px;">Android加载图片</a> <a href="/tags/Android错误/" style="font-size: 17.5px;">Android错误</a> <a href="/tags/Android面试/" style="font-size: 10px;">Android面试</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Bmob/" style="font-size: 10px;">Bmob</a> <a href="/tags/CSDN博客/" style="font-size: 10px;">CSDN博客</a> <a href="/tags/Fragment/" style="font-size: 12.5px;">Fragment</a> <a href="/tags/Handler/" style="font-size: 10px;">Handler</a> <a href="/tags/Hexo/" style="font-size: 12.5px;">Hexo</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/JAVA/" style="font-size: 12.5px;">JAVA</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jsoup/" style="font-size: 10px;">Jsoup</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Looper/" style="font-size: 10px;">Looper</a> <a href="/tags/MVC/" style="font-size: 10px;">MVC</a> <a href="/tags/MVP/" style="font-size: 10px;">MVP</a> <a href="/tags/MarkDownPad2/" style="font-size: 10px;">MarkDownPad2</a> <a href="/tags/OkHttp/" style="font-size: 12.5px;">OkHttp</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Sqlite/" style="font-size: 10px;">Sqlite</a> <a href="/tags/Studio/" style="font-size: 10px;">Studio</a> <a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a> <a href="/tags/View绘制/" style="font-size: 10px;">View绘制</a> <a href="/tags/assets/" style="font-size: 10px;">assets</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/下拉-上拉刷新/" style="font-size: 10px;">下拉/上拉刷新</a> <a href="/tags/个推/" style="font-size: 10px;">个推</a> <a href="/tags/博客/" style="font-size: 15px;">博客</a> <a href="/tags/堆和栈/" style="font-size: 10px;">堆和栈</a> <a href="/tags/快捷键/" style="font-size: 10px;">快捷键</a> <a href="/tags/注册码/" style="font-size: 10px;">注册码</a> <a href="/tags/状态栏/" style="font-size: 10px;">状态栏</a> <a href="/tags/系统分享/" style="font-size: 10px;">系统分享</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/网络协议/" style="font-size: 10px;">网络协议</a> <a href="/tags/自定义/" style="font-size: 10px;">自定义</a> <a href="/tags/自定义栏目/" style="font-size: 10px;">自定义栏目</a> <a href="/tags/面试/" style="font-size: 12.5px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/02/21/轮播条（一）/">轮播条广告位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/调用系统本身的分享功能/">Android调用系统本身的分享功能</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/获取控件的高度/">Android开发之View宽和高的获取</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/自定义View、ViewGroup、控件/">自定义View、ViewGroup、控件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/缓存机制的应用/">缓存机制的应用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

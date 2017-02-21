@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Java重要知识点（二） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇总结了一些Java重要的知识点..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java重要知识点（二）">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/Java重要知识点（二）/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本篇总结了一些Java重要的知识点..">
+<meta property="og:updated_time" content="2016-08-22T11:51:39.622Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java重要知识点（二）">
+<meta name="twitter:description" content="本篇总结了一些Java重要的知识点..">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java重要知识点（二）" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/Java重要知识点（二）/" class="article-date">
+  <time datetime="2017-02-21T06:02:09.003Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JAVA/">JAVA</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java重要知识点（二）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇总结了一些Java重要的知识点..</p>
+<a id="more"></a>
+<h1 id="JAVA知识点"><a href="#JAVA知识点" class="headerlink" title="JAVA知识点"></a>JAVA知识点</h1><h2 id="数组-Array-和列表-ArrayList-有什么区别？什么时候应该使用Array而不是ArrayList？"><a href="#数组-Array-和列表-ArrayList-有什么区别？什么时候应该使用Array而不是ArrayList？" class="headerlink" title="数组(Array)和列表(ArrayList)有什么区别？什么时候应该使用Array而不是ArrayList？"></a>数组(Array)和列表(ArrayList)有什么区别？什么时候应该使用Array而不是ArrayList？</h2><p>Array和ArrayList的不同点：<br>Array可以包含基本类型和对象类型，ArrayList只能包含对象类型。<br>Array大小是固定的，ArrayList的大小是动态变化的。<br>ArrayList提供了更多的方法和特性，比如：addAll()，removeAll()，iterator()等等。<br>对于基本类型数据，集合使用自动装箱来减少编码工作量。但是，当处理固定大小的基本数据类型的时候，这种方式相对比较慢。</p>
+<h2 id="Comparable和Comparator接口是干什么的？列出它们的区别。"><a href="#Comparable和Comparator接口是干什么的？列出它们的区别。" class="headerlink" title="Comparable和Comparator接口是干什么的？列出它们的区别。"></a>Comparable和Comparator接口是干什么的？列出它们的区别。</h2><p>Java提供了只包含一个compareTo()方法的Comparable接口。这个方法可以个给两个对象排序。具体来说，它返回负数，0，正数来表明输入对象小于，等于，大于已经存在的对象。<br>Java提供了包含compare()和equals()两个方法的Comparator接口。compare()方法用来给两个输入参数排序，返回负数，0，正数表明第一个参数是小于，等于，大于第二个参数。equals()方法需要一个对象作为参数，它用来决定输入参数是否和comparator相等。只有当输入参数也是一个comparator并且输入参数和当前comparator的排序结果是相同的时候，这个方法才返回true。</p>
+<h2 id="什么是Java优先级队列-Priority-Queue-？"><a href="#什么是Java优先级队列-Priority-Queue-？" class="headerlink" title="什么是Java优先级队列(Priority Queue)？"></a>什么是Java优先级队列(Priority Queue)？</h2><p>PriorityQueue是一个基于优先级堆的无界队列，它的元素是按照自然顺序(natural order)排序的。在创建的时候，我们可以给它提供一个负责给元素排序的比较器。PriorityQueue不允许null值，因为他们没有自然顺序，或者说他们没有任何的相关联的比较器。最后，PriorityQueue不是线程安全的，入队和出队的时间复杂度是O(log(n))。</p>
+<h2 id="Java集合类框架的最佳实践有哪些？"><a href="#Java集合类框架的最佳实践有哪些？" class="headerlink" title="Java集合类框架的最佳实践有哪些？"></a>Java集合类框架的最佳实践有哪些？</h2><p>根据应用的需要正确选择要使用的集合的类型对性能非常重要，比如：假如元素的大小是固定的，而且能事先知道，我们就应该用Array而不是ArrayList。<br>有些集合类允许指定初始容量。因此，如果我们能估计出存储的元素的数目，我们可以设置初始容量来避免重新计算hash值或者是扩容。<br>为了类型安全，可读性和健壮性的原因总是要使用泛型。同时，使用泛型还可以避免运行时的ClassCastException。<br>使用JDK提供的不变类(immutable class)作为Map的键可以避免为我们自己的类实现hashCode()和equals()方法。<br>编程的时候接口优于实现。<br>底层的集合实际上是空的情况下，返回长度是0的集合或者是数组，不要返回null。</p>
+<h2 id="HashSet和TreeSet有什么区别？"><a href="#HashSet和TreeSet有什么区别？" class="headerlink" title="HashSet和TreeSet有什么区别？"></a>HashSet和TreeSet有什么区别？</h2><p>HashSet是由一个hash表来实现的，因此，它的元素是无序的。add()，remove()，contains()方法的时间复杂度是O(1)。<br>另一方面，TreeSet是由一个树形的结构来实现的，它里面的元素是有序的。因此，add()，remove()，contains()方法的时间复杂度是O(logn)。</p>
+<h2 id="finalize-方法什么时候被调用？析构函数-finalization-的目的是什么？"><a href="#finalize-方法什么时候被调用？析构函数-finalization-的目的是什么？" class="headerlink" title="finalize()方法什么时候被调用？析构函数(finalization)的目的是什么？"></a>finalize()方法什么时候被调用？析构函数(finalization)的目的是什么？</h2><p>垃圾回收器(garbage colector)决定回收某对象时，就会运行该对象的finalize()方法 但是在Java中很不幸，如果内存总是充足的，那么垃圾回收可能永远不会进行，也就是说filalize()可能永远不被执行，显然指望它做收尾工作是靠不住的。 那么finalize()究竟是做什么的呢？它最主要的用途是回收特殊渠道申请的内存。Java程序有垃圾回收器，所以一般情况下内存问题不用程序员操心。但有一种JNI(Java Native Interface)调用non-Java程序（C或C++），finalize()的工作就是回收这部分的内存。</p>
+<h2 id="Java堆的结构是什么样子的？什么是堆中的永久代-Perm-Gen-space"><a href="#Java堆的结构是什么样子的？什么是堆中的永久代-Perm-Gen-space" class="headerlink" title="Java堆的结构是什么样子的？什么是堆中的永久代(Perm Gen space)?"></a>Java堆的结构是什么样子的？什么是堆中的永久代(Perm Gen space)?</h2><p>JVM的堆是运行时数据区，所有类的实例和数组都是在堆上分配内存。它在JVM启动的时候被创建。对象所占的堆内存是由自动内存管理系统也就是垃圾收集器回收。<br>堆内存是由存活和死亡的对象组成的。存活的对象是应用可以访问的，不会被垃圾回收。死亡的对象是应用不可访问尚且还没有被垃圾收集器回收掉的对象。一直到垃圾收集器把这些对象回收掉之前，他们会一直占据堆内存空间。</p>
+<h2 id="Java中的两种异常类型是什么？他们有什么区别？"><a href="#Java中的两种异常类型是什么？他们有什么区别？" class="headerlink" title="Java中的两种异常类型是什么？他们有什么区别？"></a>Java中的两种异常类型是什么？他们有什么区别？</h2><p>Java中有两种异常：受检查的(checked)异常和不受检查的(unchecked)异常。不受检查的异常不需要在方法或者是构造函数上声明，就算方法或者是构造函数的执行可能会抛出这样的异常，并且不受检查的异常可以传播到方法或者是构造函数的外面。相反，受检查的异常必须要用throws语句在方法或者是构造函数上声明。这里有Java异常处理的一些小建议。</p>
+<h2 id="throw和throws有什么区别？"><a href="#throw和throws有什么区别？" class="headerlink" title="throw和throws有什么区别？"></a>throw和throws有什么区别？</h2><p>throw关键字用来在程序中明确的抛出异常，相反，throws语句用来表明方法不能处理的异常。每一个方法都必须要指定哪些异常不能处理，所以方法的调用者才能够确保处理可能发生的异常，多个异常是用逗号分隔的。</p>
+<h2 id="异常处理完成以后，Exception对象会发生什么变化？"><a href="#异常处理完成以后，Exception对象会发生什么变化？" class="headerlink" title="异常处理完成以后，Exception对象会发生什么变化？"></a>异常处理完成以后，Exception对象会发生什么变化？</h2><p>Exception对象会在下一个垃圾回收过程中被回收掉。</p>
+<h2 id="finally代码块和finalize-方法有什么区别？"><a href="#finally代码块和finalize-方法有什么区别？" class="headerlink" title="finally代码块和finalize()方法有什么区别？"></a>finally代码块和finalize()方法有什么区别？</h2><p>无论是否抛出异常，finally代码块都会执行，它主要是用来释放应用占用的资源。finalize()方法是Object类的一个protected方法，它是在对象被垃圾回收之前由Java虚拟机来调用的。<br>Java小应用程序(Applet)</p>
+<h2 id="什么是Applet？-解释一下Applet的生命周期"><a href="#什么是Applet？-解释一下Applet的生命周期" class="headerlink" title="什么是Applet？    解释一下Applet的生命周期"></a>什么是Applet？    解释一下Applet的生命周期</h2><p>java applet是能够被包含在HTML页面中并且能被启用了java的客户端浏览器执行的程序。Applet主要用来创建动态交互的web应用程序。</p>
+<pre><code>applet可以经历下面的状态：
+Init：每次被载入的时候都会被初始化。
+Start：开始执行applet。
+Stop：结束执行applet。
+Destroy：卸载applet之前，做最后的清理工作。
+</code></pre><h2 id="Applet和普通的Java应用程序有什么区别？"><a href="#Applet和普通的Java应用程序有什么区别？" class="headerlink" title="Applet和普通的Java应用程序有什么区别？"></a>Applet和普通的Java应用程序有什么区别？</h2><p>applet是运行在启用了java的浏览器中，Java应用程序是可以在浏览器之外运行的独立的Java程序。但是，它们都需要有Java虚拟机。<br>进一步来说，Java应用程序需要一个有特定方法签名的main函数来开始执行。Java applet不需要这样的函数来开始执行。<br>最后，Java applet一般会使用很严格的安全策略，Java应用一般使用比较宽松的安全策略。</p>
+<h2 id="哪些Swing的方法是线程安全的？"><a href="#哪些Swing的方法是线程安全的？" class="headerlink" title="哪些Swing的方法是线程安全的？"></a>哪些Swing的方法是线程安全的？</h2><p>只有3个线程安全的方法： repaint(), revalidate(), and invalidate()。</p>
+<h2 id="事件监听器接口-event-listener-interface-和事件适配器-event-adapter-有什么关系？"><a href="#事件监听器接口-event-listener-interface-和事件适配器-event-adapter-有什么关系？" class="headerlink" title="事件监听器接口(event-listener interface)和事件适配器(event-adapter)有什么关系？"></a>事件监听器接口(event-listener interface)和事件适配器(event-adapter)有什么关系？</h2><p>事件监听器接口定义了对特定的事件，事件处理器必须要实现的方法。事件适配器给事件监听器接口提供了默认的实现。</p>
+<h2 id="什么是JDBC？"><a href="#什么是JDBC？" class="headerlink" title="什么是JDBC？"></a>什么是JDBC？</h2><p>JDBC是允许用户在不同数据库之间做选择的一个抽象层。JDBC允许开发者用JAVA写数据库应用程序，而不需要关心底层特定数据库的细节。</p>
+<h2 id="RMI体系结构分哪几层？"><a href="#RMI体系结构分哪几层？" class="headerlink" title="RMI体系结构分哪几层？"></a>RMI体系结构分哪几层？</h2><p>RMI体系结构分以下几层：<br>存根和骨架层(Stub and Skeleton layer)：这一层对程序员是透明的，它主要负责拦截客户端发出的方法调用请求，然后把请求重定向给远程的RMI服务。<br>远程引用层(Remote Reference Layer)：RMI体系结构的第二层用来解析客户端对服务端远程对象的引用。这一层解析并管理客户端对服务端远程对象的引用。连接是点到点的。<br>传输层(Transport layer)：这一层负责连接参与服务的两个JVM。这一层是建立在网络上机器间的TCP/IP连接之上的。它提供了基本的连接服务，还有一些防火墙穿透策略。</p>
+<h2 id="解释下Servlet的生命周期。"><a href="#解释下Servlet的生命周期。" class="headerlink" title="解释下Servlet的生命周期。"></a>解释下Servlet的生命周期。</h2><p>对每一个客户端的请求，Servlet引擎载入Servlet，调用它的init()方法，完成Servlet的初始化。然后，Servlet对象通过为每一个请求单独调用service()方法来处理所有随后来自客户端的请求，最后，调用Servlet(译者注：这里应该是Servlet而不是server)的destroy()方法把Servlet删除掉。</p>
+<h2 id="doGet-方法和doPost-方法有什么区别？"><a href="#doGet-方法和doPost-方法有什么区别？" class="headerlink" title="doGet()方法和doPost()方法有什么区别？"></a>doGet()方法和doPost()方法有什么区别？</h2><p>doGet：GET方法会把名值对追加在请求的URL后面。因为URL对字符数目有限制，进而限制了用在客户端请求的参数值的数目。并且请求中的参数值是可见的，因此，敏感信息不能用这种方式传递。</p>
+<p>doPOST：POST方法通过把请求参数值放在请求体中来克服GET方法的限制，因此，可以发送的参数的数目是没有限制的。最后，通过POST请求传递的敏感信息对外部客户端是不可见的。</p>
+<h2 id="HTTP响应的结构是怎么样的？"><a href="#HTTP响应的结构是怎么样的？" class="headerlink" title="HTTP响应的结构是怎么样的？"></a>HTTP响应的结构是怎么样的？</h2><p>HTTP响应由三个部分组成：</p>
+<p>状态码(Status Code)：描述了响应的状态。可以用来检查是否成功的完成了请求。请求失败的情况下，状态码可用来找出失败的原因。如果Servlet没有返回状态码，默认会返回成功的状态码HttpServletResponse.SC_OK。</p>
+<p>HTTP头部(HTTP Header)：它们包含了更多关于响应的信息。比如：头部可以指定认为响应过期的过期日期，或者是指定用来给用户安全的传输实体内容的编码格式。如何在Serlet中检索HTTP的头部看这里。</p>
+<p>主体(Body)：它包含了响应的内容。它可以包含HTML代码，图片，等等。主体是由传输在HTTP消息中紧跟在头部后面的数据字节组成的。</p>
+<h2 id="多态的定义？"><a href="#多态的定义？" class="headerlink" title="多态的定义？"></a>多态的定义？</h2><p>多态是编程语言给不同的底层数据类型做相同的接口展示的一种能力。一个多态类型上的操作可以应用到其他类型的值上面。</p>
+<h2 id="继承的定义？"><a href="#继承的定义？" class="headerlink" title="继承的定义？"></a>继承的定义？</h2><p>继承给对象提供了从基类获取字段和方法的能力。继承提供了代码的重用行，也可以在不修改类的情况下给现存的类添加新特性。</p>
+<h2 id="抽象的定义？抽象和封装的不同点？"><a href="#抽象的定义？抽象和封装的不同点？" class="headerlink" title="抽象的定义？抽象和封装的不同点？"></a>抽象的定义？抽象和封装的不同点？</h2><p>抽象是把想法从具体的实例中分离出来的步骤，因此，要根据他们的功能而不是实现细节来创建类。Java支持创建只暴漏接口而不包含方法实现的抽象的类。这种抽象技术的主要目的是把类的行为和实现细节分离开。</p>
+<p>抽象和封装是互补的概念。一方面，抽象关注对象的行为。另一方面，封装关注对象行为的细节。一般是通过隐藏对象内部状态信息做到封装，因此，封装可以看成是用来提供抽象的一种策略。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/Java重要知识点（二）/" data-id="cizf6sz9h001wloo5rscvz6io" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/Jsoup知识总结/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Jsoup方法总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/21/Java重要知识点/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Java重要知识点（一）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android-Studio/">Android Studio</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android案例/">Android案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android知识点/">Android知识点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android第三方库/">Android第三方库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android重点/">Android重点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android错误/">Android错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android面试/">Android面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bmob/">Bmob</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSDN博客/">CSDN博客</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Handler/">Handler</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo教程/">Hexo教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Http/">Http</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java面试/">Java面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Jsoup/">Jsoup</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Looper/">Looper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OOM解决方案/">OOM解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RxJava/">RxJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/命令总结/">命令总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/堆和栈/">堆和栈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/学习辅助工具/">学习辅助工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/常见错误/">常见错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/百度地图/">百度地图</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存机制/">缓存机制</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解决方案/">解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/项目SDK/">项目SDK</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-Studio/">Android Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android加载图片/">Android加载图片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android错误/">Android错误</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android面试/">Android面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bmob/">Bmob</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客/">CSDN博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fragment/">Fragment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Handler/">Handler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Http/">Http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsoup/">Jsoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Looper/">Looper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVC/">MVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDownPad2/">MarkDownPad2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OkHttp/">OkHttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RxJava/">RxJava</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sqlite/">Sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Studio/">Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View绘制/">View绘制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/assets/">assets</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlite/">sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下拉-上拉刷新/">下拉/上拉刷新</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/个推/">个推</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆和栈/">堆和栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/快捷键/">快捷键</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注册码/">注册码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/状态栏/">状态栏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统分享/">系统分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程/">线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络协议/">网络协议</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义/">自定义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义栏目/">自定义栏目</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 12.5px;">Android Studio</a> <a href="/tags/Android加载图片/" style="font-size: 10px;">Android加载图片</a> <a href="/tags/Android错误/" style="font-size: 17.5px;">Android错误</a> <a href="/tags/Android面试/" style="font-size: 10px;">Android面试</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Bmob/" style="font-size: 10px;">Bmob</a> <a href="/tags/CSDN博客/" style="font-size: 10px;">CSDN博客</a> <a href="/tags/Fragment/" style="font-size: 12.5px;">Fragment</a> <a href="/tags/Handler/" style="font-size: 10px;">Handler</a> <a href="/tags/Hexo/" style="font-size: 12.5px;">Hexo</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/JAVA/" style="font-size: 12.5px;">JAVA</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jsoup/" style="font-size: 10px;">Jsoup</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Looper/" style="font-size: 10px;">Looper</a> <a href="/tags/MVC/" style="font-size: 10px;">MVC</a> <a href="/tags/MVP/" style="font-size: 10px;">MVP</a> <a href="/tags/MarkDownPad2/" style="font-size: 10px;">MarkDownPad2</a> <a href="/tags/OkHttp/" style="font-size: 12.5px;">OkHttp</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Sqlite/" style="font-size: 10px;">Sqlite</a> <a href="/tags/Studio/" style="font-size: 10px;">Studio</a> <a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a> <a href="/tags/View绘制/" style="font-size: 10px;">View绘制</a> <a href="/tags/assets/" style="font-size: 10px;">assets</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/下拉-上拉刷新/" style="font-size: 10px;">下拉/上拉刷新</a> <a href="/tags/个推/" style="font-size: 10px;">个推</a> <a href="/tags/博客/" style="font-size: 15px;">博客</a> <a href="/tags/堆和栈/" style="font-size: 10px;">堆和栈</a> <a href="/tags/快捷键/" style="font-size: 10px;">快捷键</a> <a href="/tags/注册码/" style="font-size: 10px;">注册码</a> <a href="/tags/状态栏/" style="font-size: 10px;">状态栏</a> <a href="/tags/系统分享/" style="font-size: 10px;">系统分享</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/网络协议/" style="font-size: 10px;">网络协议</a> <a href="/tags/自定义/" style="font-size: 10px;">自定义</a> <a href="/tags/自定义栏目/" style="font-size: 10px;">自定义栏目</a> <a href="/tags/面试/" style="font-size: 12.5px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/02/21/轮播条（一）/">轮播条广告位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/调用系统本身的分享功能/">Android调用系统本身的分享功能</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/获取控件的高度/">Android开发之View宽和高的获取</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/自定义View、ViewGroup、控件/">自定义View、ViewGroup、控件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/缓存机制的应用/">缓存机制的应用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

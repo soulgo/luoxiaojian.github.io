@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android Bitmap 知识点梳理 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇总结了一些AndroidBitmap的知识点..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Bitmap 知识点梳理">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/View的绘制流程分析/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本篇总结了一些AndroidBitmap的知识点..">
+<meta property="og:updated_time" content="2016-08-22T11:47:37.551Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Bitmap 知识点梳理">
+<meta name="twitter:description" content="本篇总结了一些AndroidBitmap的知识点..">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-View的绘制流程分析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/View的绘制流程分析/" class="article-date">
+  <time datetime="2017-02-21T06:02:09.037Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android重点/">Android重点</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android Bitmap 知识点梳理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇总结了一些AndroidBitmap的知识点..</p>
+<a id="more"></a>
+<h1 id="View绘制基本流程"><a href="#View绘制基本流程" class="headerlink" title="View绘制基本流程"></a>View绘制基本流程</h1><p>Android系统View的绘制流程：依次执行View类里面的如下三个方法：<br>measure(int ,int) :测量View的大小</p>
+<p>layout(int ,int ,int ,int) ：设置子View的位置</p>
+<p>draw(Canvas) ：绘制View内容到Canvas画布上</p>
+<p>整个View树的绘图流程是在ViewRoot.Java类的performTraversals()函数展开的，该函数做的执行过程可简单概况为根据之前设置的状态，判断是否需要重新计算视图大小(measure)、是否重新需要安置视图的位置(layout)、以及是否需要重绘 (draw)</p>
+<h2 id="mesarue-测量过程"><a href="#mesarue-测量过程" class="headerlink" title="mesarue()测量过程"></a>mesarue()测量过程</h2><p>主要作用：为整个View树计算实际的大小，即设置实际的高(mMeasuredHeight)和宽(mMeasureWidth)，每个View的控件的实际宽高都是由父视图和本身视图决定的。</p>
+<p>具体的调用如下：</p>
+<p>ViewRootImpl 的performTraversals方法中，调用measureHierarchy，然后调用performMeasure</p>
+<pre><code>private void performMeasure(int childWidthMeasureSpec, int childHeightMeasureSpec) {  
+       Trace.traceBegin(Trace.TRACE_TAG_VIEW, &quot;measure&quot;);  
+       try {  
+           mView.measure(childWidthMeasureSpec, childHeightMeasureSpec);  
+       } finally {  
+           Trace.traceEnd(Trace.TRACE_TAG_VIEW);  
+       }  
+       }
+</code></pre><p>ViewRoot根对象地属性mView(其类型一般为ViewGroup类型)调用measure()方法去计算View树的大小，回调View/ViewGroup对象的onMeasure()方法，该方法实现的功能如下：</p>
+<p>1、设置本View视图的最终大小，该功能的实现通过调用setMeasuredDimension()方法去设置实际的高(mMeasuredHeight)和宽(mMeasureWidth)</p>
+<p>2、如果该View对象是个ViewGroup类型，需要重写onMeasure()方法，对其子视图进行遍历的measure()过程。</p>
+<p>对每个子视图的measure()过程，是通过调用父类ViewGroup.java类里的measureChildWithMargins()方法去实现，该方法内部只是简单地调用了View对象的measure()方法。</p>
+<p>整个measure调用流程就是个树形的递归过程measure()方法两个参数都是父View传递过来的，也就是代表了父view的规格。他由两部分组成，高2位表示MODE，定义在MeasureSpec类（View的内部类）中，有三种类型，MeasureSpec.EXACTLY表示确定大小， MeasureSpec.AT_MOST表示最大大小， MeasureSpec.UNSPECIFIED不确定。低30位表示size，也就是父View的大小。对于系统Window类的DecorVIew对象Mode一般都为MeasureSpec.EXACTLY ，而size分别对应屏幕宽高。对于子View来说大小是由父View和子View共同决定的。</p>
+<pre><code>protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {  
+setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),  
+        getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));  
+}
+</code></pre><hr>
+<pre><code>protected final void setMeasuredDimension(int measuredWidth, int measuredHeight) {  
+ boolean optical = isLayoutModeOptical(this);  
+ if (optical != isLayoutModeOptical(mParent)) {  
+     Insets insets = getOpticalInsets();  
+     int opticalWidth  = insets.left + insets.right;  
+     int opticalHeight = insets.top  + insets.bottom;  
+
+     measuredWidth  += optical ? opticalWidth  : -opticalWidth;  
+     measuredHeight += optical ? opticalHeight : -opticalHeight;  
+ }  
+ mMeasuredWidth = measuredWidth;  
+ mMeasuredHeight = measuredHeight;  
+
+ mPrivateFlags |= PFLAG_MEASURED_DIMENSION_SET;  
+ }
+</code></pre><h2 id="layout布局过程"><a href="#layout布局过程" class="headerlink" title="layout布局过程"></a>layout布局过程</h2><p>主要作用 ：为将整个根据子视图的大小以及布局参数将View树放到合适的位置上。</p>
+<p>具体的调用如下：</p>
+<pre><code>ViewRootImpl 的performTraversals方法中，调用performLayout
+
+private void performLayout(WindowManager.LayoutParams lp, int desiredWindowWidth,  
+    int desiredWindowHeight) {  
+mLayoutRequested = false;  
+mScrollMayChange = true;  
+mInLayout = true;  
+
+final View host = mView;  
+if (DEBUG_ORIENTATION || DEBUG_LAYOUT) {  
+    Log.v(TAG, &quot;Laying out &quot; + host + &quot; to (&quot; +  
+            host.getMeasuredWidth() + &quot;, &quot; + host.getMeasuredHeight() + &quot;)&quot;);  
+}  
+
+Trace.traceBegin(Trace.TRACE_TAG_VIEW, &quot;layout&quot;);  
+try {  
+    host.layout(0, 0, host.getMeasuredWidth(), host.getMeasuredHeight());  
+
+    mInLayout = false;  
+    int numViewsRequestingLayout = mLayoutRequesters.size();  
+    if (numViewsRequestingLayout &gt; 0) {  
+        // requestLayout() was called during layout.  
+        // If no layout-request flags are set on the requesting views, there is no problem.  
+        // If some requests are still pending, then we need to clear those flags and do  
+        // a full request/measure/layout pass to handle this situation.  
+        ArrayList&lt;View&gt; validLayoutRequesters = getValidLayoutRequesters(mLayoutRequesters,  
+                false);  
+        if (validLayoutRequesters != null) {  
+            // Set this flag to indicate that any further requests are happening during  
+            // the second pass, which may result in posting those requests to the next  
+            // frame instead  
+            mHandlingLayoutInLayoutRequest = true;  
+
+            // Process fresh layout requests, then measure and layout  
+            int numValidRequests = validLayoutRequesters.size();  
+            for (int i = 0; i &lt; numValidRequests; ++i) {  
+                final View view = validLayoutRequesters.get(i);  
+                Log.w(&quot;View&quot;, &quot;requestLayout() improperly called by &quot; + view +  
+                        &quot; during layout: running second layout pass&quot;);  
+                view.requestLayout();  
+            }  
+            measureHierarchy(host, lp, mView.getContext().getResources(),  
+                    desiredWindowWidth, desiredWindowHeight);  
+            mInLayout = true;  
+            host.layout(0, 0, host.getMeasuredWidth(), host.getMeasuredHeight());  
+
+            mHandlingLayoutInLayoutRequest = false;  
+
+            // Check the valid requests again, this time without checking/clearing the  
+            // layout flags, since requests happening during the second pass get noop&apos;d  
+            validLayoutRequesters = getValidLayoutRequesters(mLayoutRequesters, true);  
+            if (validLayoutRequesters != null) {  
+                final ArrayList&lt;View&gt; finalRequesters = validLayoutRequesters;  
+                // Post second-pass requests to the next frame  
+                getRunQueue().post(new Runnable() {  
+                    @Override  
+                    public void run() {  
+                        int numValidRequests = finalRequesters.size();  
+                        for (int i = 0; i &lt; numValidRequests; ++i) {  
+                            final View view = finalRequesters.get(i);  
+                            Log.w(&quot;View&quot;, &quot;requestLayout() improperly called by &quot; + view +  
+                                    &quot; during second layout pass: posting in next frame&quot;);  
+                            view.requestLayout();  
+                        }  
+                    }  
+                });  
+            }  
+        }  
+
+    }  
+} finally {  
+    Trace.traceEnd(Trace.TRACE_TAG_VIEW);  
+}  
+mInLayout = false;  
+</code></pre><p>}</p>
+<h2 id="draw-绘图过程"><a href="#draw-绘图过程" class="headerlink" title="draw()绘图过程"></a>draw()绘图过程</h2><p>ViewRootImpl 的performTraversals方法中，调用了mView的draw方法</p>
+<p>mView.draw()开始绘制，draw()方法实现的功能如下：</p>
+<p>1 、绘制该View的背景</p>
+<p>2 、为显示渐变框做一些准备操作</p>
+<p>3、调用onDraw()方法绘制视图本身   (每个View都需要重载该方法，ViewGroup不需要实现该方法)</p>
+<p>4、调用dispatchDraw ()方法绘制子视图(如果该View类型不为ViewGroup，即不包含子视图，不需要重载该方法)</p>
+<p>值得说明的是，ViewGroup类已经为我们重写了dispatchDraw ()的功能实现，应用程序一般不需要重写该方法，但可以重载父类函数实现具体的功能。</p>
+<p>dispatchDraw()方法内部会遍历每个子视图，调用drawChild()去重新回调每个子视图的draw()方法。</p>
+<h2 id="5、绘制滚动条"><a href="#5、绘制滚动条" class="headerlink" title="5、绘制滚动条"></a>5、绘制滚动条</h2><p>刷新视图</p>
+<p>Android中实现view的更新有两个方法，一个是invalidate，另一个是postInvalidate，其中前者是在UI线程自身中使用，而后者在非UI线程中使用。</p>
+<p>requestLayout()方法 ：会导致调用measure()过程 和 layout()过程 。</p>
+<p>说明：只是对View树重新布局layout过程包括measure()和layout()过程，不会调用draw()过程，但不会重新绘制<br>任何视图包括该调用者本身。<br>一般引起invalidate()操作的函数如下：</p>
+<p>1、直接调用invalidate()方法，请求重新draw()，但只会绘制调用者本身。</p>
+<p>2、setSelection()方法 ：请求重新draw()，但只会绘制调用者本身。</p>
+<p>3、setVisibility()方法 ： 当View可视状态在INVISIBLE转换VISIBLE时，会间接调用invalidate()方法，继而绘制该View。</p>
+<p>4 、setEnabled()方法 ： 请求重新draw()，但不会重新绘制任何视图包括该调用者本身。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/View的绘制流程分析/" data-id="cizf6szbs003dloo5sfnq592v" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/View绘制/">View绘制</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/WeakReference的理解与使用/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          WeakReference的理解与使用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/21/View的绘制/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android-Studio/">Android Studio</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android案例/">Android案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android知识点/">Android知识点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android第三方库/">Android第三方库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android重点/">Android重点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android错误/">Android错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android面试/">Android面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bmob/">Bmob</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSDN博客/">CSDN博客</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Handler/">Handler</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo教程/">Hexo教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Http/">Http</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java面试/">Java面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Jsoup/">Jsoup</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Looper/">Looper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OOM解决方案/">OOM解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RxJava/">RxJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/命令总结/">命令总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/堆和栈/">堆和栈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/学习辅助工具/">学习辅助工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/常见错误/">常见错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/百度地图/">百度地图</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存机制/">缓存机制</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解决方案/">解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/项目SDK/">项目SDK</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-Studio/">Android Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android加载图片/">Android加载图片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android错误/">Android错误</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android面试/">Android面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bmob/">Bmob</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客/">CSDN博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fragment/">Fragment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Handler/">Handler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Http/">Http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsoup/">Jsoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Looper/">Looper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVC/">MVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDownPad2/">MarkDownPad2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OkHttp/">OkHttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RxJava/">RxJava</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sqlite/">Sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Studio/">Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View绘制/">View绘制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/assets/">assets</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlite/">sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下拉-上拉刷新/">下拉/上拉刷新</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/个推/">个推</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆和栈/">堆和栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/快捷键/">快捷键</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注册码/">注册码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/状态栏/">状态栏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统分享/">系统分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程/">线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络协议/">网络协议</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义/">自定义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义栏目/">自定义栏目</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 12.5px;">Android Studio</a> <a href="/tags/Android加载图片/" style="font-size: 10px;">Android加载图片</a> <a href="/tags/Android错误/" style="font-size: 17.5px;">Android错误</a> <a href="/tags/Android面试/" style="font-size: 10px;">Android面试</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Bmob/" style="font-size: 10px;">Bmob</a> <a href="/tags/CSDN博客/" style="font-size: 10px;">CSDN博客</a> <a href="/tags/Fragment/" style="font-size: 12.5px;">Fragment</a> <a href="/tags/Handler/" style="font-size: 10px;">Handler</a> <a href="/tags/Hexo/" style="font-size: 12.5px;">Hexo</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/JAVA/" style="font-size: 12.5px;">JAVA</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jsoup/" style="font-size: 10px;">Jsoup</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Looper/" style="font-size: 10px;">Looper</a> <a href="/tags/MVC/" style="font-size: 10px;">MVC</a> <a href="/tags/MVP/" style="font-size: 10px;">MVP</a> <a href="/tags/MarkDownPad2/" style="font-size: 10px;">MarkDownPad2</a> <a href="/tags/OkHttp/" style="font-size: 12.5px;">OkHttp</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Sqlite/" style="font-size: 10px;">Sqlite</a> <a href="/tags/Studio/" style="font-size: 10px;">Studio</a> <a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a> <a href="/tags/View绘制/" style="font-size: 10px;">View绘制</a> <a href="/tags/assets/" style="font-size: 10px;">assets</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/下拉-上拉刷新/" style="font-size: 10px;">下拉/上拉刷新</a> <a href="/tags/个推/" style="font-size: 10px;">个推</a> <a href="/tags/博客/" style="font-size: 15px;">博客</a> <a href="/tags/堆和栈/" style="font-size: 10px;">堆和栈</a> <a href="/tags/快捷键/" style="font-size: 10px;">快捷键</a> <a href="/tags/注册码/" style="font-size: 10px;">注册码</a> <a href="/tags/状态栏/" style="font-size: 10px;">状态栏</a> <a href="/tags/系统分享/" style="font-size: 10px;">系统分享</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/网络协议/" style="font-size: 10px;">网络协议</a> <a href="/tags/自定义/" style="font-size: 10px;">自定义</a> <a href="/tags/自定义栏目/" style="font-size: 10px;">自定义栏目</a> <a href="/tags/面试/" style="font-size: 12.5px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/02/21/轮播条（一）/">轮播条广告位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/调用系统本身的分享功能/">Android调用系统本身的分享功能</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/获取控件的高度/">Android开发之View宽和高的获取</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/自定义View、ViewGroup、控件/">自定义View、ViewGroup、控件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/缓存机制的应用/">缓存机制的应用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

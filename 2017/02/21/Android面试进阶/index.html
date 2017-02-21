@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android面试进阶 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇总结了Android面试进阶..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android面试进阶">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/Android面试进阶/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本篇总结了Android面试进阶..">
+<meta property="og:updated_time" content="2016-11-15T04:29:16.484Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android面试进阶">
+<meta name="twitter:description" content="本篇总结了Android面试进阶..">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Android面试进阶" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/Android面试进阶/" class="article-date">
+  <time datetime="2017-02-21T06:02:08.974Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/面试/">面试</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android面试进阶
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇总结了Android面试进阶..</p>
+<a id="more"></a>
+<h1 id="什么是ANR，如何避免？"><a href="#什么是ANR，如何避免？" class="headerlink" title="什么是ANR，如何避免？"></a>什么是ANR，如何避免？</h1><blockquote>
+<p>ANR：Application Not Responding。<br>在 Android 中，活动管理器和窗口管理器这两个系统服务负责监视应用程序的响应。当出现下列情况时，Android 就会显示 ANR 对话框了： </p>
+<ol>
+<li>用户对应用程序的操作(如输入事件，按键、触摸屏事件)在5秒内无响应 </li>
+<li>广播接受器(BroadcastReceiver)在10秒内仍未执行完毕 </li>
+<li>ServiceTimeout(20 seconds) –小概率类型，Service在特定的时间内无法处理完成</li>
+</ol>
+<p>超时的原因一般有两种： </p>
+<p>(1)当前的事件没有机会得到处理（UI线程正在处理前一个事件没有及时完成或者looper被某种原因阻塞住） </p>
+<p>(2)当前的事件正在处理，但没有及时完成</p>
+<p>UI线程尽量只做跟UI相关的工作，耗时的工作（数据库操作，I/O，连接网络或者其他可能阻碍UI线程的操作）放入单独的线程处理，尽量用Handler来处理UI thread和thread之间的交互。</p>
+<p>UI线程主要包括如下：<br>Activity:onCreate(), onResume(), onDestroy(), onKeyDown(), onClick()<br>AsyncTask: onPreExecute(), onProgressUpdate(), onPostExecute(), onCancel()<br>Mainthread handler: handleMessage(), post(runnable r) </p>
+<p>Android 应用程序完全运行在一个独立的线程中(例如 main)。这就意味着，任何在主 线程中运行的，需要消耗大量时间的操作都会引发 ANR。因为此时，你的应用程序已经没有机会去响应输入事件和意向广播(Intentbroadcast)。<br>避免方法：Activity 应该在它的关键生命周期方法（如 onCreate()和 onResume()）里尽可能少的去做创建操作，<br>潜在的耗时操作。例如网络或数据库操作，或者高耗时的计算如改变位图尺寸，应该在子线程里（或者异步方式）来完成。<br>主线程应该为子线程提供一个 Handler，以便完成时能够提交给主线程。</p>
+</blockquote>
+<h1 id="Handler机制原理？"><a href="#Handler机制原理？" class="headerlink" title="Handler机制原理？"></a>Handler机制原理？</h1><blockquote>
+<p>andriod 提供了 Handler 和 Looper 来满足线程间的通信。Handler 先进先出原则。<br>Looper 类用来管理特定线程内对象之间的消息交换 (MessageExchange)。 </p>
+<ol>
+<li>Looper: 一个线程可以产生一个 Looper 对象，由它来管理此线程里的 MessageQueue(消息队列)。 </li>
+<li>Handler: 你可以构造 Handler 对象来与 Looper 沟通，以便 push 新消息到 MessageQueue 里;或者接收 Looper 从 MessageQueue 取出)所送来的消息。 </li>
+<li>Message Queue(消息队列 ): 用来存放线程放入的消息。 </li>
+<li>线程： UI thread 通常就是 main thread， 而 Android 启动程序时会替它建立一个 MessageQueue。</li>
+</ol>
+</blockquote>
+<h1 id="请解释下在单线程模型中Message、Handler、Message-Queue、Looper之间的关系。"><a href="#请解释下在单线程模型中Message、Handler、Message-Queue、Looper之间的关系。" class="headerlink" title="请解释下在单线程模型中Message、Handler、Message Queue、Looper之间的关系。"></a>请解释下在单线程模型中Message、Handler、Message Queue、Looper之间的关系。</h1><p>&gt;</p>
+<ol>
+<li>MessageQueue：装食物的容器 </li>
+<li>Message：被装的食物 </li>
+<li>Handler（msg.target实际上就是Handler）：食物的消费者 </li>
+<li>Looper：负责分发食物的人</li>
+</ol>
+<blockquote>
+<p>简单的说，Handler获取当前线程中的 looper对象，looper 用来从存放 Message 的 MessageQueue中取出 Message，再有 Handler 进行 Message 的分发和处理. </p>
+<p>Message Queue(消息队列)： 用来存放通过 Handler 发布的消息， 通常附属于某一个创建它的线程，可以通过 Looper.myQueue()得到当前线程的消息队列 </p>
+<p>Handler：可以发布或者处理一个消息或者操作一个 Runnable，通过 Handler发布消息， 消息将只会发送到与它关联的消息队列，然也只能处理该消息队列中的消息 </p>
+<p>Looper：是 Handler 和消息队列之间通讯桥梁，程序组件首先通过 Handler 把消息传递给 Looper，Looper 把消息放入队列。Looper 也把消息队列里的消息广播给所有的 </p>
+<p>Handler：Handler 接受到消息后调用 handleMessage进行处理 </p>
+<p>Message：消息的类型，在 Handler 类中的 handleMessage 方法中得到单个的消息进行处理 </p>
+<p>在单线程模型下， 为了线程通信问题， Android 设计了一个 Message Queue(消息队列)， 线程间可以通过该 Message Queue 并结合 Handler 和 Looper 组件进行信息交换。 </p>
+<p>下面将对它 们进行分别介绍：</p>
+<ol>
+<li>Message :Message 消息，理解为线程间交流的信息，处理数据后台线程需要更新 UI ，则发送Message 内含一些数据给 UI 线程。 </li>
+<li>Handler<br>Handler处理者，是 Message 的主要处理者，负责 Message 的发送，Message 内容的执行处理。后台线程就是通过传进来的 Handler对象引用来 sendMessage(Message)。<br>而使用 Handler，需要 implement 该类的 handleMessage(Message)方法，它是处理这些<br>Message 的操作内容，例如 Update UI 。通常需要子类化 Handler 来实现 handleMessage方法。 </li>
+<li>Message Queue<br>Message Queue 消息队列，用来存放通过 Handler 发布的消息，按照先进先出执行。每个 message queue 都会有一个对应的 Handler。Handler 会向 messagequeue 通过两种方法发送消息：sendMessage 或 post。这两种消息都会插在 message queue 队尾并<br>按先进先出执行。但通过这两种方法发送的消息执行的方式略有不同：通过 sendMessage发送的是一个 message 对象,会被 Handler 的 handleMessage()函数处理；而通过 post 方法发送的是一个 runnable 对象，则会自己执行。 </li>
+<li>Looper<br>Looper 是每条线程里的 Message Queue 的管家。Android 没有 Global 的MessageQueue，而 Android 会自动替主线程(UI 线程)建立 Message Queue，但在子线程里并没有建立 Message Queue。 所以调用 Looper.getMainLooper()得到的主线程的 Looper 不为 NULL，但调用 Looper.myLooper()得到当前线程的 Looper 就有可能为 NULL。</li>
+</ol>
+</blockquote>
+<h1 id="Android-中线程与线程，进程与进程之间如何通信"><a href="#Android-中线程与线程，进程与进程之间如何通信" class="headerlink" title="Android 中线程与线程，进程与进程之间如何通信 ?"></a>Android 中线程与线程，进程与进程之间如何通信 ?</h1><blockquote>
+<p>1、一个 Android 程序开始运行时，会单独启动一个 Process(进程）。<br>默认情况下，所有这个程序中的 Activity 或者 Service 都会跑在这个 Process。<br>默认情况下，一个 Android 程序也只有一个 Process，但一个 Process 下却可以有许多个 Thread。 </p>
+<p>2、一个 Android 程序开始运行时，就有一个主线程 MainThread 被创建。该线程主要负责 UI 界面的显示、更新和控件交互，所以又叫 UI Thread。 </p>
+<p>一个 Android 程序创建之初，一个 Process 呈现的是单线程模型–即 Main Thread，<br>所有的任务都在一个线程中运行。所以，Main Thread 所调用的每一个函数，其耗时应该<br>越短越好。而对于比较费时的工作，应该设法交给子线程去做，以避免阻塞主线程（主线程被阻塞，会导致程序假死 现象）。</p>
+<p>3、Android 单线程模型：Android UI 操作并不是线程安全的并且这些操作必须在 UI 线程中执行。如果在子线程中直接修改 UI，会导致异常。 </p>
+<p>4.Android 的 的 IPC （ 进程间通信 ） 机制<br>IPC 是内部进程通信的简称， 是共享 ” 命名管道 ” 的资源。Android 中的 IPC机制是为了让<br>Activity 和 Service之间可以随时的进行交互，故在 Android 中该机制，只适用于 Activity 和 Service之间的通信，类似于远程方法调用，类似于 C/S 模式的访问。通过定义 AIDL 接口文件来定义 IPC 接口。Servier 端实现 IPC接口，Client 端调用 IPC接口本地代理。</p>
+</blockquote>
+<h1 id="View-surfaceView-GLSurfaceView的区别"><a href="#View-surfaceView-GLSurfaceView的区别" class="headerlink" title="View, surfaceView, GLSurfaceView的区别"></a>View, surfaceView, GLSurfaceView的区别</h1><p>View 是最基础的，必须在 UI 主线程内更新画面，速度较慢。 </p>
+<p>SurfaceView 是 view 的子类，类似使用双缓机制，在新的线程中更新画面所以刷新界面速度比 view 快 GLSurfaceView 是SurfaceView 的子类，opengl 专用的。 </p>
+<p>区别：SurfaceView是从View基类中派生出来的显示类，直接子类有GLSurfaceView和VideoView，可以看出GL和视频播放以及Camera摄像头一般均使用SurfaceView</p>
+<p>SurfaceView和View最本质的区别在于，surfaceView是在一个新起的单独线程中可以重新绘制画面而View必须在UI的主线程中更新画面。<br>那么在UI的主线程中更新画面 可能会引发问题，比如你更新画面的时间过长，那么你的主UI线程会被你正在画的函数阻塞。那么将无法响应按键，触屏等消息。 </p>
+<p>当使用surfaceView 由于是在新的线程中更新画面所以不会阻塞你的UI主线程。但这也带来了另外一个问题，就是事件同步。比如你触屏了一下，你需要surfaceView中thread处理，一般就需要有一个event queue的设计来保存touch event，这会稍稍复杂一点，因为涉及到线程同步。</p>
+<h1 id="关于AndroidOOM，以及如何避免？"><a href="#关于AndroidOOM，以及如何避免？" class="headerlink" title="关于AndroidOOM，以及如何避免？"></a>关于AndroidOOM，以及如何避免？</h1><p>Android的虚拟机是基于寄存器的Dalvik，它的最大堆大小一般是16M，有的机器为24M。因此我们所能利用的内存空间是有限的。如果我们的内存占用超过了一定的水平就会出现OutOfMemory的错误。 </p>
+<p>1.使用缓存技术，比如LruCache、DiskLruCache、对象重复并且频繁调用可以考虑对象池</p>
+<p>2.对于引用生命周期不一样的对象，可以用软引用或弱引用</p>
+<p>3.对于资源对象 使用finally 强制关闭</p>
+<p>4.内存压力过大就要统一的管理内存</p>
+<p>5.对于java中不再使用的资源需要尽快的释放，即设置成null，不要老是指望垃圾回收器为你工作。如果不设置成null，那么资源回收会受到一定的影响。</p>
+<p>6.尽量少用static方法和static成员。因为static的方法或成员被外部使用的话，而外部的牵引对象没有对其进行释放的话那么整个static的类都不会被释放，也就造成内存泄漏。</p>
+<p>7.对于不再使用的bitmap应该手动调用recycle方法，并且设置成null。图片还要尽量使用软引用方式，这样可以加快垃圾回收。</p>
+<h1 id="说说mvc模式的原理，它在android中的运用"><a href="#说说mvc模式的原理，它在android中的运用" class="headerlink" title="说说mvc模式的原理，它在android中的运用?"></a>说说mvc模式的原理，它在android中的运用?</h1><p>android的官方建议应用程序的开发采用mvc模式。何谓mvc？</p>
+<p>　mvc是model,view,controller的缩写，mvc包含三个部分： </p>
+<ol>
+<li>模型（model）对象：是应用程序的主体部分，所有的业务逻辑都应该写在该层。 </li>
+<li>视图（view）对象：是应用程序中负责生成用户界面的部分。也是在整个mvc架构中用户唯一可以看到的一层，接收用户的输入，显示处理结果。 </li>
+<li>控制器（control）对象：是根据用户的输入，控制用户界面数据显示及更新model对象状态的部分，控制器更重要的一种导航功能，想用用户出发的相关事件，交给m处理。 </li>
+<li><p>　android鼓励弱耦合和组件的重用，在android中mvc的具体体现如下： </p>
+<ol>
+<li>视图层（view）：一般采用xml文件进行界面的描述，使用的时候可以非常方便的引入，当然，如何你对android了解的比较的多了话，就一定 可以想到在android中也可以使用JavaScript+html等的方式作为view层，当然这里需要进行java和javascript之间的通 信，幸运的是，android提供了它们之间非常方便的通信实现。 </li>
+<li>控制层（controller）：android的控制层的重 任通常落在了众多的acitvity的肩上，这句话也就暗含了不要在acitivity中写代码，要通过activity交割model业务逻辑层处理， 这样做的另外一个原因是android中的acitivity的响应时间是5s，如果耗时的操作放在这里，程序就很容易被回收掉。 </li>
+<li>模型层（model）：对数据库的操作、对网络等的操作都应该在model里面处理，当然对业务计算等操作也是必须放在的该层的。 </li>
+</ol>
+</li>
+</ol>
+<h1 id="要做一个尽可能流畅的ListView，你平时在工作中如何进行优化的？"><a href="#要做一个尽可能流畅的ListView，你平时在工作中如何进行优化的？" class="headerlink" title="要做一个尽可能流畅的ListView，你平时在工作中如何进行优化的？"></a>要做一个尽可能流畅的ListView，你平时在工作中如何进行优化的？</h1><ol>
+<li>tem布局，层级越少越好，使用hierarchyview工具查看优化。 </li>
+<li>复用convertView </li>
+<li>使用ViewHolder </li>
+<li>item中有图片时，异步加载 </li>
+<li>快速滑动时，不加载图片 </li>
+<li>item中有图片时，应对图片进行适当压缩 </li>
+<li>实现数据的分页加载</li>
+</ol>
+<h1 id="对于Android-的安全问题，你知道多少"><a href="#对于Android-的安全问题，你知道多少" class="headerlink" title="对于Android 的安全问题，你知道多少"></a>对于Android 的安全问题，你知道多少</h1><ol>
+<li>错误导出组件 </li>
+<li>参数校验不严 </li>
+<li>WebView引入各种安全问题,webview中的js注入 </li>
+<li>不混淆、不防二次打包 </li>
+<li>明文存储关键信息 </li>
+<li>错误使用HTTPS </li>
+<li>山寨加密方法 </li>
+<li>滥用权限、内存泄露、使用debug签名</li>
+</ol>
+<h1 id="Android启动Service的两种方式是什么-它们的适用情况是什么"><a href="#Android启动Service的两种方式是什么-它们的适用情况是什么" class="headerlink" title="Android启动Service的两种方式是什么? 它们的适用情况是什么?"></a>Android启动Service的两种方式是什么? 它们的适用情况是什么?</h1><p>如果后台服务开始后基本可以独立运行的话，可以用startService。音乐播放器就可以这样用。它们会一直运行直到你调用 stopSelf或者stopService。你可以通过发送Intent或者接收Intent来与正在运行的后台服务通信，但大部分时间，你只是启动服务并让它独立运行。如果你需要与后台服务通过一个持续的连接来比较频繁地通信，建议使用bind()。比如你需要定位服务不停地把更新后的地理位置传给UI。Binder比Intent开发起来复杂一些，但如果真的需要，你也只能使用它。 </p>
+<p>startService：生命周期与调用者不同。启动后若调用者未调用stopService而直接退出，Service仍会运行 </p>
+<p>bindService：生命周期与调用者绑定，调用者一旦退出，Service就会调用unBind-&gt;onDestroy</p>
+<h1 id="介绍下实现一个自定义view的基本流程"><a href="#介绍下实现一个自定义view的基本流程" class="headerlink" title="介绍下实现一个自定义view的基本流程?"></a>介绍下实现一个自定义view的基本流程?</h1><ol>
+<li>自定义View的属性 编写attr.xml文件 </li>
+<li>在layout布局文件中引用，同时引用命名空间</li>
+<li>在View的构造方法中获得我们自定义的属性 ，在自定义控件中进行读取（构造方法拿到attr.xml文件值） </li>
+<li>重写onMesure </li>
+<li>重写onDraw</li>
+</ol>
+<h1 id="Android多线程的实现方式有哪些"><a href="#Android多线程的实现方式有哪些" class="headerlink" title="Android多线程的实现方式有哪些?"></a>Android多线程的实现方式有哪些?</h1><ol>
+<li>Thread &amp; AsyncTask </li>
+<li>Thread 可以与Loop 和 Handler 共用建立消息处理队列 </li>
+<li>AsyncTask 可以作为线程池并行处理多任务</li>
+</ol>
+<h1 id="Android下解决滑动冲突的常见思路是什么"><a href="#Android下解决滑动冲突的常见思路是什么" class="headerlink" title="Android下解决滑动冲突的常见思路是什么?"></a>Android下解决滑动冲突的常见思路是什么?</h1><p>相关的滑动组件 重写onInterceptTouchEvent，然后判断根据xy值，来决定是否要拦截当前操作</p>
+<hr>
+<h1 id="HttpURLConnection和HttpClient他们各自的优缺点是什么"><a href="#HttpURLConnection和HttpClient他们各自的优缺点是什么" class="headerlink" title="HttpURLConnection和HttpClient他们各自的优缺点是什么?"></a>HttpURLConnection和HttpClient他们各自的优缺点是什么?</h1><h1 id="请问平时开发过程中，你是如何做到多分辨率适配的？"><a href="#请问平时开发过程中，你是如何做到多分辨率适配的？" class="headerlink" title=".请问平时开发过程中，你是如何做到多分辨率适配的？"></a>.请问平时开发过程中，你是如何做到多分辨率适配的？</h1><ol>
+<li>根据不同分辨率建立不同的布局文件 </li>
+<li>根据分辨率不同建立不同分辨率的资源图片 </li>
+<li>在程序启动时，获取当前屏幕的分辨率和密度，在代码中进行适配 </li>
+<li>为不同分辨率的写不同的dimen文件。 </li>
+<li>其实还有就是多使用fragement</li>
+</ol>
+<h1 id="如何在不失真的条件下显示一张超高清的图片或者长图"><a href="#如何在不失真的条件下显示一张超高清的图片或者长图" class="headerlink" title="如何在不失真的条件下显示一张超高清的图片或者长图?"></a>如何在不失真的条件下显示一张超高清的图片或者长图?</h1><ol>
+<li>通过计算BitmapFactory.Options 对象的inSamleSize 值 等比的压缩图片 。 </li>
+<li>使用WebView来加载该图片； </li>
+<li>使用MapView或者TileView来显示图片（类似地图的机制）</li>
+</ol>
+<h1 id="1-android-async-http"><a href="#1-android-async-http" class="headerlink" title="1. android-async-http."></a>1. android-async-http.</h1><p>1.封装了下常用的方法,get post 上传 下载 ,所有的请求我都是用的同步请求. </p>
+<p>具体的用法一般都是和业务逻辑在一起,而我的业务逻辑是用异步去处理的. </p>
+<p>关于网络请求结果的缓存,我是单独处理的.并没有放在网络层.</p>
+<p>2.在HttpUrlConnection基础上封装, 包括请求成功, 失败, 请求中, 网络问题等封装, 利用广播与UI交互<br>3.直接使用xUtils，afinal,okHttp，Volley等开源第三方框架；</p>
+<p>Bitmap是android中经常使用的一个类，它代表了一个图片资源。<br>Bitmap消耗内存很严重，如果不注意优化代码，经常会出现OOM问题，优化方式通常有这么几种：</p>
+<ol>
+<li>使用缓存； </li>
+<li>压缩图片； </li>
+<li>及时回收；</li>
+</ol>
+<h1 id="Android-fragment和activity的区别"><a href="#Android-fragment和activity的区别" class="headerlink" title="Android fragment和activity的区别"></a>Android fragment和activity的区别</h1><p>你可以理解Fragment是一种特殊的View，负责一个模块或者一个特殊部分的展示。</p>
+<p>大部分Fragment是依托于Activity存在的，由Activity的FragmentManager来管理 </p>
+<p>Fragment可以解决多Activity的问题，即将3.0之前的频繁Activity跳转改成一个Activity内Fragment的切换。<br>&gt;</p>
+<ol>
+<li>Fragment可以解决碎片化的问题。 </li>
+<li>fragment是android3.0新增的 </li>
+<li>fragment可以重用 </li>
+<li>fragment必须嵌套在activity中使用，它的生命周期受activity的影响。</li>
+</ol>
+<h1 id="Service和广播-BroadcastReceivre会不会出现ANR？"><a href="#Service和广播-BroadcastReceivre会不会出现ANR？" class="headerlink" title="Service和广播 BroadcastReceivre会不会出现ANR？"></a>Service和广播 BroadcastReceivre会不会出现ANR？</h1><p>Service，广播 会出现ANR </p>
+<p>服务, 广播都是主线程中, 既然是主线程 当然会anr 所以耗时操作还是必须另起线程</p>
+<p>通俗的说超时时间：Activity 5秒, Broadcast 10秒, Server 20秒</p>
+<p># </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/Android面试进阶/" data-id="cizf6sz800010loo5bl15nmrt" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android面试/">Android面试</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/Android：异步任务AsyncTask、execute、publishProgress、onProgressUpdate/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Android：异步任务AsyncTask、execute、publishProgress、onProgressUpdate
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/21/Android面试基础/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Android面试基础</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android-Studio/">Android Studio</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android案例/">Android案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android知识点/">Android知识点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android第三方库/">Android第三方库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android重点/">Android重点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android错误/">Android错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android面试/">Android面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bmob/">Bmob</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSDN博客/">CSDN博客</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Handler/">Handler</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo教程/">Hexo教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Http/">Http</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java面试/">Java面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Jsoup/">Jsoup</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Looper/">Looper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OOM解决方案/">OOM解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RxJava/">RxJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/命令总结/">命令总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/堆和栈/">堆和栈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/学习辅助工具/">学习辅助工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/常见错误/">常见错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/百度地图/">百度地图</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存机制/">缓存机制</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解决方案/">解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/项目SDK/">项目SDK</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-Studio/">Android Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android加载图片/">Android加载图片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android错误/">Android错误</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android面试/">Android面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bmob/">Bmob</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客/">CSDN博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fragment/">Fragment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Handler/">Handler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Http/">Http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsoup/">Jsoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Looper/">Looper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVC/">MVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDownPad2/">MarkDownPad2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OkHttp/">OkHttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RxJava/">RxJava</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sqlite/">Sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Studio/">Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View绘制/">View绘制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/assets/">assets</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlite/">sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下拉-上拉刷新/">下拉/上拉刷新</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/个推/">个推</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆和栈/">堆和栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/快捷键/">快捷键</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注册码/">注册码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/状态栏/">状态栏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统分享/">系统分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程/">线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络协议/">网络协议</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义/">自定义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义栏目/">自定义栏目</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 12.5px;">Android Studio</a> <a href="/tags/Android加载图片/" style="font-size: 10px;">Android加载图片</a> <a href="/tags/Android错误/" style="font-size: 17.5px;">Android错误</a> <a href="/tags/Android面试/" style="font-size: 10px;">Android面试</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Bmob/" style="font-size: 10px;">Bmob</a> <a href="/tags/CSDN博客/" style="font-size: 10px;">CSDN博客</a> <a href="/tags/Fragment/" style="font-size: 12.5px;">Fragment</a> <a href="/tags/Handler/" style="font-size: 10px;">Handler</a> <a href="/tags/Hexo/" style="font-size: 12.5px;">Hexo</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/JAVA/" style="font-size: 12.5px;">JAVA</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jsoup/" style="font-size: 10px;">Jsoup</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Looper/" style="font-size: 10px;">Looper</a> <a href="/tags/MVC/" style="font-size: 10px;">MVC</a> <a href="/tags/MVP/" style="font-size: 10px;">MVP</a> <a href="/tags/MarkDownPad2/" style="font-size: 10px;">MarkDownPad2</a> <a href="/tags/OkHttp/" style="font-size: 12.5px;">OkHttp</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Sqlite/" style="font-size: 10px;">Sqlite</a> <a href="/tags/Studio/" style="font-size: 10px;">Studio</a> <a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a> <a href="/tags/View绘制/" style="font-size: 10px;">View绘制</a> <a href="/tags/assets/" style="font-size: 10px;">assets</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/下拉-上拉刷新/" style="font-size: 10px;">下拉/上拉刷新</a> <a href="/tags/个推/" style="font-size: 10px;">个推</a> <a href="/tags/博客/" style="font-size: 15px;">博客</a> <a href="/tags/堆和栈/" style="font-size: 10px;">堆和栈</a> <a href="/tags/快捷键/" style="font-size: 10px;">快捷键</a> <a href="/tags/注册码/" style="font-size: 10px;">注册码</a> <a href="/tags/状态栏/" style="font-size: 10px;">状态栏</a> <a href="/tags/系统分享/" style="font-size: 10px;">系统分享</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/网络协议/" style="font-size: 10px;">网络协议</a> <a href="/tags/自定义/" style="font-size: 10px;">自定义</a> <a href="/tags/自定义栏目/" style="font-size: 10px;">自定义栏目</a> <a href="/tags/面试/" style="font-size: 12.5px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/02/21/轮播条（一）/">轮播条广告位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/调用系统本身的分享功能/">Android调用系统本身的分享功能</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/获取控件的高度/">Android开发之View宽和高的获取</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/自定义View、ViewGroup、控件/">自定义View、ViewGroup、控件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/缓存机制的应用/">缓存机制的应用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

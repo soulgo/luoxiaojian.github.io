@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>关于OkHttp的基本使用 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇总结了关于OkHttp的基本使用..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于OkHttp的基本使用">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/关于OkHttp/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本篇总结了关于OkHttp的基本使用..">
+<meta property="og:updated_time" content="2016-08-30T02:32:12.888Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于OkHttp的基本使用">
+<meta name="twitter:description" content="本篇总结了关于OkHttp的基本使用..">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-关于OkHttp" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/关于OkHttp/" class="article-date">
+  <time datetime="2017-02-21T06:02:09.054Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android第三方库/">Android第三方库</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      关于OkHttp的基本使用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇总结了关于OkHttp的基本使用..</p>
+<a id="more"></a>
+<h2 id="异步get"><a href="#异步get" class="headerlink" title="异步get"></a>异步get</h2><p>在一个工作线程中下载文件，当响应可读时回调Callback接口。读取响应时会阻塞当前线程。OkHttp现阶段不提供异步api来接收响应体。</p>
+<pre><code>private final OkHttpClient client = new OkHttpClient();
+
+public void run() throws Exception {
+Request request = new Request.Builder()
+    .url(&quot;http://publicobject.com/helloworld.txt&quot;)
+    .build();
+
+client.newCall(request).enqueue(new Callback() {
+  @Override public void onFailure(Request request, Throwable throwable) {
+    throwable.printStackTrace();
+  }
+
+  @Override public void onResponse(Response response) throws IOException {
+    if (!response.isSuccessful()) throw new IOException(&quot;Unexpected code &quot; + response);
+
+    Headers responseHeaders = response.headers();
+    for (int i = 0; i &lt; responseHeaders.size(); i++) {
+      System.out.println(responseHeaders.name(i) + &quot;: &quot; + responseHeaders.value(i));
+    }
+
+    System.out.println(response.body().string());
+      }
+       });
+}
+</code></pre><h2 id="Post方式提交String"><a href="#Post方式提交String" class="headerlink" title="Post方式提交String"></a>Post方式提交String</h2><p>使用HTTP POST提交请求到服务。这个例子提交了一个markdown文档到web服务，以HTML方式渲染markdown。因为整个请求体都在内存中，因此避免使用此api提交大文档（大于1MB）。</p>
+<pre><code>public static final MediaType MEDIA_TYPE_MARKDOWN
+  = MediaType.parse(&quot;text/x-markdown; charset=utf-8&quot;);
+
+private final OkHttpClient client = new OkHttpClient();
+
+public void run() throws Exception {
+    String postBody = &quot;&quot;
+        + &quot;Releases\n&quot;
+        + &quot;--------\n&quot;
+        + &quot;\n&quot;
+        + &quot; * _1.0_ May 6, 2013\n&quot;
+        + &quot; * _1.1_ June 15, 2013\n&quot;
+        + &quot; * _1.2_ August 11, 2013\n&quot;;
+
+Request request = new Request.Builder()
+    .url(&quot;https://api.github.com/markdown/raw&quot;)
+    .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, postBody))
+    .build();
+
+Response response = client.newCall(request).execute();
+if (!response.isSuccessful()) throw new IOException(&quot;Unexpected code &quot; + response);
+
+    System.out.println(response.body().string());
+}
+</code></pre><h2 id="Post方式提交流"><a href="#Post方式提交流" class="headerlink" title="Post方式提交流"></a>Post方式提交流</h2><p>以流的方式POST提交请求体。请求体的内容由流写入产生。这个例子是流直接写入Okio的BufferedSink。你的程序可能会使用OutputStream，你可以使用BufferedSink.outputStream()来获取。</p>
+<pre><code>public static final MediaType MEDIA_TYPE_MARKDOWN
+      = MediaType.parse(&quot;text/x-markdown; charset=utf-8&quot;); 
+private final OkHttpClient client = new OkHttpClient();
+public void run() throws Exception {
+RequestBody requestBody = new RequestBody() {
+  @Override public MediaType contentType() {
+    return MEDIA_TYPE_MARKDOWN;
+  }
+  @Override public void writeTo(BufferedSink sink) throws IOException {
+    sink.writeUtf8(&quot;Numbers\n&quot;);
+    sink.writeUtf8(&quot;-------\n&quot;);
+    for (int i = 2; i &lt;= 997; i++) {
+      sink.writeUtf8(String.format(&quot; * %s = %s\n&quot;, i, factor(i)));
+    }
+  }
+
+  private String factor(int n) {
+    for (int i = 2; i &lt; n; i++) {
+      int x = n / i;
+      if (x * i == n) return factor(x) + &quot; × &quot; + i;
+    }
+    return Integer.toString(n);
+  }
+};
+
+Request request = new Request.Builder()
+    .url(&quot;https://api.github.com/markdown/raw&quot;)
+    .post(requestBody)
+    .build();
+
+Response response = client.newCall(request).execute();
+if (!response.isSuccessful()) throw new IOException(&quot;Unexpected code &quot; + response);
+
+System.out.println(response.body().string());
+</code></pre><p>}</p>
+<h2 id="Post方式提交文件"><a href="#Post方式提交文件" class="headerlink" title="Post方式提交文件"></a>Post方式提交文件</h2><p>以文件作为请求体是十分简单的。</p>
+<pre><code>public static final MediaType MEDIA_TYPE_MARKDOWN
+  = MediaType.parse(&quot;text/x-markdown; charset=utf-8&quot;);
+
+private final OkHttpClient client = new OkHttpClient();
+
+public void run() throws Exception {
+File file = new File(&quot;README.md&quot;);
+
+Request request = new Request.Builder()
+    .url(&quot;https://api.github.com/markdown/raw&quot;)
+    .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, file))
+    .build();
+
+Response response = client.newCall(request).execute();
+if (!response.isSuccessful()) throw new IOException(&quot;Unexpected code &quot; + response);
+
+    System.out.println(response.body().string());
+}
+</code></pre><p>Post方式提交表单<br>使用FormEncodingBuilder来构建和HTML<form>标签相同效果的请求体。键值对将使用一种HTML兼容形式的URL编码来进行编码。</form></p>
+<p>private final OkHttpClient client = new OkHttpClient();</p>
+<p>public void run() throws Exception {<br>    RequestBody formBody = new FormEncodingBuilder()<br>        .add(“search”, “Jurassic Park”)<br>        .build();<br>    Request request = new Request.Builder()<br>        .url(“<a href="https://en.wikipedia.org/w/index.php" target="_blank" rel="external">https://en.wikipedia.org/w/index.php</a>“)<br>        .post(formBody)<br>        .build();</p>
+<pre><code>Response response = client.newCall(request).execute();
+if (!response.isSuccessful()) throw new IOException(&quot;Unexpected code &quot; + response);
+
+System.out.println(response.body().string());
+</code></pre><p>}</p>
+<h2 id="Post方式提交分块请求"><a href="#Post方式提交分块请求" class="headerlink" title="Post方式提交分块请求"></a>Post方式提交分块请求</h2><p>MultipartBuilder可以构建复杂的请求体，与HTML文件上传形式兼容。多块请求体中每块请求都是一个请求体，可以定义自己的请求头。这些请求头可以用来描述这块请求，例如他的Content-Disposition。如果Content-Length和Content-Type可用的话，他们会被自动添加到请求头中。</p>
+<pre><code>private static final String IMGUR_CLIENT_ID = &quot;...&quot;;
+private static final MediaType MEDIA_TYPE_PNG = MediaType.parse(&quot;image/png&quot;);
+
+private final OkHttpClient client = new OkHttpClient();
+
+public void run() throws Exception {
+// Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
+RequestBody requestBody = new MultipartBuilder()
+    .type(MultipartBuilder.FORM)
+    .addPart(
+        Headers.of(&quot;Content-Disposition&quot;, &quot;form-data; name=\&quot;title\&quot;&quot;),
+        RequestBody.create(null, &quot;Square Logo&quot;))
+    .addPart(
+        Headers.of(&quot;Content-Disposition&quot;, &quot;form-data; name=\&quot;image\&quot;&quot;),
+        RequestBody.create(MEDIA_TYPE_PNG, new File(&quot;website/static/logo-square.png&quot;)))
+    .build();
+
+Request request = new Request.Builder()
+    .header(&quot;Authorization&quot;, &quot;Client-ID &quot; + IMGUR_CLIENT_ID)
+    .url(&quot;https://api.imgur.com/3/image&quot;)
+    .post(requestBody)
+    .build();
+
+Response response = client.newCall(request).execute();
+if (!response.isSuccessful()) throw new IOException(&quot;Unexpected code &quot; + response);
+
+    System.out.println(response.body().string());
+}
+</code></pre><h2 id="Post方式提交分块请求-1"><a href="#Post方式提交分块请求-1" class="headerlink" title="Post方式提交分块请求"></a>Post方式提交分块请求</h2><p>MultipartBuilder可以构建复杂的请求体，与HTML文件上传形式兼容。多块请求体中每块请求都是一个请求体，可以定义自己的请求头。这些请求头可以用来描述这块请求，例如他的Content-Disposition。如果Content-Length和Content-Type可用的话，他们会被自动添加到请求头中。</p>
+<pre><code>private static final String IMGUR_CLIENT_ID = &quot;...&quot;;
+private static final MediaType MEDIA_TYPE_PNG = MediaType.parse(&quot;image/png&quot;);
+
+private final OkHttpClient client = new OkHttpClient();
+
+public void run() throws Exception {
+// Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
+RequestBody requestBody = new MultipartBuilder()
+    .type(MultipartBuilder.FORM)
+    .addPart(
+        Headers.of(&quot;Content-Disposition&quot;, &quot;form-data; name=\&quot;title\&quot;&quot;),
+        RequestBody.create(null, &quot;Square Logo&quot;))
+    .addPart(
+        Headers.of(&quot;Content-Disposition&quot;, &quot;form-data; name=\&quot;image\&quot;&quot;),
+        RequestBody.create(MEDIA_TYPE_PNG, new File(&quot;website/static/logo-square.png&quot;)))
+    .build();
+
+Request request = new Request.Builder()
+    .header(&quot;Authorization&quot;, &quot;Client-ID &quot; + IMGUR_CLIENT_ID)
+    .url(&quot;https://api.imgur.com/3/image&quot;)
+    .post(requestBody)
+    .build();
+
+Response response = client.newCall(request).execute();
+if (!response.isSuccessful()) throw new IOException(&quot;Unexpected code &quot; + response);
+
+        System.out.println(response.body().string());
+}
+</code></pre><h2 id="响应缓存"><a href="#响应缓存" class="headerlink" title="响应缓存"></a>响应缓存</h2><p>为了缓存响应，你需要一个你可以读写的缓存目录，和缓存大小的限制。这个缓存目录应该是私有的，不信任的程序应不能读取缓存内容。<br>一个缓存目录同时拥有多个缓存访问是错误的。大多数程序只需要调用一次new OkHttp()，在第一次调用时配置好缓存，然后其他地方只需要调用这个实例就可以了。否则两个缓存示例互相干扰，破坏响应缓存，而且有可能会导致程序崩溃。<br>响应缓存使用HTTP头作为配置。你可以在请求头中添加Cache-Control: max-stale=3600 ,OkHttp缓存会支持。你的服务通过响应头确定响应缓存多长时间，例如使用Cache-Control: max-age=9600。</p>
+<pre><code>private final OkHttpClient client;
+
+public CacheResponse(File cacheDirectory) throws Exception {
+int cacheSize = 10 * 1024 * 1024; // 10 MiB
+Cache cache = new Cache(cacheDirectory, cacheSize);
+
+client = new OkHttpClient();
+client.setCache(cache);
+}
+
+public void run() throws Exception {
+Request request = new Request.Builder()
+    .url(&quot;http://publicobject.com/helloworld.txt&quot;)
+    .build();
+
+Response response1 = client.newCall(request).execute();
+if (!response1.isSuccessful()) throw new IOException(&quot;Unexpected code &quot; + response1);
+
+String response1Body = response1.body().string();
+    System.out.println(&quot;Response 1 response:          &quot; + response1);
+    System.out.println(&quot;Response 1 cache response:    &quot; + response1.cacheResponse());
+    System.out.println(&quot;Response 1 network response:  &quot; + response1.networkResponse());
+
+Response response2 = client.newCall(request).execute();
+if (!response2.isSuccessful()) throw new IOException(&quot;Unexpected code &quot; + response2);
+
+String response2Body = response2.body().string();
+    System.out.println(&quot;Response 2 response:          &quot; + response2);
+    System.out.println(&quot;Response 2 cache response:    &quot; + response2.cacheResponse());
+    System.out.println(&quot;Response 2 network response:  &quot; + response2.networkResponse());
+
+    System.out.println(&quot;Response 2 equals Response 1? &quot; +     response1Body.equals(response2Body));
+}
+</code></pre><h2 id="取消一个Call"><a href="#取消一个Call" class="headerlink" title="取消一个Call"></a>取消一个Call</h2><p>使用Call.cancel()可以立即停止掉一个正在执行的call。如果一个线程正在写请求或者读响应，将会引发IOException。当call没有必要的时候，使用这个api可以节约网络资源。例如当用户离开一个应用时。不管同步还是异步的call都可以取消。<br>你可以通过tags来同时取消多个请求。当你构建一请求时，使用RequestBuilder.tag(tag)来分配一个标签。之后你就可以用OkHttpClient.cancel(tag)来取消所有带有这个tag的call。</p>
+<pre><code>private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+private final OkHttpClient client = new OkHttpClient();
+
+public void run() throws Exception {
+Request request = new Request.Builder()
+    .url(&quot;http://httpbin.org/delay/2&quot;) // This URL is served with a 2 second delay.
+    .build();
+
+final long startNanos = System.nanoTime();
+final Call call = client.newCall(request);
+
+// Schedule a job to cancel the call in 1 second.
+executor.schedule(new Runnable() {
+  @Override public void run() {
+    System.out.printf(&quot;%.2f Canceling call.%n&quot;, (System.nanoTime() - startNanos) / 1e9f);
+    call.cancel();
+    System.out.printf(&quot;%.2f Canceled call.%n&quot;, (System.nanoTime() - startNanos) / 1e9f);
+  }
+}, 1, TimeUnit.SECONDS);
+
+try {
+  System.out.printf(&quot;%.2f Executing call.%n&quot;, (System.nanoTime() - startNanos) / 1e9f);
+  Response response = call.execute();
+  System.out.printf(&quot;%.2f Call was expected to fail, but completed: %s%n&quot;,
+      (System.nanoTime() - startNanos) / 1e9f, response);
+} catch (IOException e) {
+  System.out.printf(&quot;%.2f Call failed as expected: %s%n&quot;,
+      (System.nanoTime() - startNanos) / 1e9f, e);
+    }
+}
+</code></pre><h2 id="超时"><a href="#超时" class="headerlink" title="超时"></a>超时</h2><p>没有响应时使用超时结束call。没有响应的原因可能是客户点链接问题、服务器可用性问题或者这之间的其他东西。OkHttp支持连接，读取和写入超时。</p>
+<pre><code>private final OkHttpClient client;
+
+public ConfigureTimeouts() throws Exception {
+client = new OkHttpClient();
+client.setConnectTimeout(10, TimeUnit.SECONDS);
+client.setWriteTimeout(10, TimeUnit.SECONDS);
+client.setReadTimeout(30, TimeUnit.SECONDS);
+}
+
+public void run() throws Exception {
+Request request = new Request.Builder()
+    .url(&quot;http://httpbin.org/delay/2&quot;) // This URL is served with a 2 second delay.
+    .build();
+
+Response response = client.newCall(request).execute();
+    System.out.println(&quot;Response completed: &quot; + response);
+}
+</code></pre><h2 id="每个call的配置-新版取消了Clone）"><a href="#每个call的配置-新版取消了Clone）" class="headerlink" title="每个call的配置(新版取消了Clone）"></a>每个call的配置(新版取消了Clone）</h2><p>使用OkHttpClient，所有的HTTP Client配置包括代理设置、超时设置、缓存设置。当你需要为单个call改变配置的时候，clone 一个 OkHttpClient。这个api将会返回一个浅拷贝（shallow copy），你可以用来单独自定义。下面的例子中，我们让一个请求是500ms的超时、另一个是3000ms的超时。</p>
+<pre><code>private final OkHttpClient client = new OkHttpClient();
+
+public void run() throws Exception {
+Request request = new Request.Builder()
+    .url(&quot;http://httpbin.org/delay/1&quot;) // This URL is served with a 1 second delay.
+    .build();
+
+try {
+  Response response = client.clone() // Clone to make a customized OkHttp for this request.
+      .setReadTimeout(500, TimeUnit.MILLISECONDS)
+      .newCall(request)
+      .execute();
+  System.out.println(&quot;Response 1 succeeded: &quot; + response);
+} catch (IOException e) {
+  System.out.println(&quot;Response 1 failed: &quot; + e);
+}
+
+try {
+  Response response = client.clone() // Clone to make a customized OkHttp for this request.
+      .setReadTimeout(3000, TimeUnit.MILLISECONDS)
+      .newCall(request)
+      .execute();
+  System.out.println(&quot;Response 2 succeeded: &quot; + response);
+} catch (IOException e) {
+      System.out.println(&quot;Response 2 failed: &quot; + e);
+    }
+}
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/关于OkHttp/" data-id="cizf6szdm004oloo5no8og1t1" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OkHttp/">OkHttp</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/关于OkHttp的基本使用/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          关于OkHttp的基本使用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/21/关于java.lang.NoClassDefFoundError错误的问题/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">关于java.lang.NoClassDefFoundError错误的问题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android-Studio/">Android Studio</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android案例/">Android案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android知识点/">Android知识点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android第三方库/">Android第三方库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android重点/">Android重点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android错误/">Android错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android面试/">Android面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bmob/">Bmob</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSDN博客/">CSDN博客</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Handler/">Handler</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo教程/">Hexo教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Http/">Http</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java面试/">Java面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Jsoup/">Jsoup</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Looper/">Looper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OOM解决方案/">OOM解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RxJava/">RxJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/命令总结/">命令总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/堆和栈/">堆和栈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/学习辅助工具/">学习辅助工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/常见错误/">常见错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/百度地图/">百度地图</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存机制/">缓存机制</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解决方案/">解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/项目SDK/">项目SDK</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-Studio/">Android Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android加载图片/">Android加载图片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android错误/">Android错误</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android面试/">Android面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bmob/">Bmob</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客/">CSDN博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fragment/">Fragment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Handler/">Handler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Http/">Http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsoup/">Jsoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Looper/">Looper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVC/">MVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDownPad2/">MarkDownPad2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OkHttp/">OkHttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RxJava/">RxJava</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sqlite/">Sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Studio/">Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View绘制/">View绘制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/assets/">assets</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlite/">sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下拉-上拉刷新/">下拉/上拉刷新</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/个推/">个推</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆和栈/">堆和栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/快捷键/">快捷键</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注册码/">注册码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/状态栏/">状态栏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统分享/">系统分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程/">线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络协议/">网络协议</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义/">自定义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义栏目/">自定义栏目</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 12.5px;">Android Studio</a> <a href="/tags/Android加载图片/" style="font-size: 10px;">Android加载图片</a> <a href="/tags/Android错误/" style="font-size: 17.5px;">Android错误</a> <a href="/tags/Android面试/" style="font-size: 10px;">Android面试</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Bmob/" style="font-size: 10px;">Bmob</a> <a href="/tags/CSDN博客/" style="font-size: 10px;">CSDN博客</a> <a href="/tags/Fragment/" style="font-size: 12.5px;">Fragment</a> <a href="/tags/Handler/" style="font-size: 10px;">Handler</a> <a href="/tags/Hexo/" style="font-size: 12.5px;">Hexo</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/JAVA/" style="font-size: 12.5px;">JAVA</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jsoup/" style="font-size: 10px;">Jsoup</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Looper/" style="font-size: 10px;">Looper</a> <a href="/tags/MVC/" style="font-size: 10px;">MVC</a> <a href="/tags/MVP/" style="font-size: 10px;">MVP</a> <a href="/tags/MarkDownPad2/" style="font-size: 10px;">MarkDownPad2</a> <a href="/tags/OkHttp/" style="font-size: 12.5px;">OkHttp</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Sqlite/" style="font-size: 10px;">Sqlite</a> <a href="/tags/Studio/" style="font-size: 10px;">Studio</a> <a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a> <a href="/tags/View绘制/" style="font-size: 10px;">View绘制</a> <a href="/tags/assets/" style="font-size: 10px;">assets</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/下拉-上拉刷新/" style="font-size: 10px;">下拉/上拉刷新</a> <a href="/tags/个推/" style="font-size: 10px;">个推</a> <a href="/tags/博客/" style="font-size: 15px;">博客</a> <a href="/tags/堆和栈/" style="font-size: 10px;">堆和栈</a> <a href="/tags/快捷键/" style="font-size: 10px;">快捷键</a> <a href="/tags/注册码/" style="font-size: 10px;">注册码</a> <a href="/tags/状态栏/" style="font-size: 10px;">状态栏</a> <a href="/tags/系统分享/" style="font-size: 10px;">系统分享</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/网络协议/" style="font-size: 10px;">网络协议</a> <a href="/tags/自定义/" style="font-size: 10px;">自定义</a> <a href="/tags/自定义栏目/" style="font-size: 10px;">自定义栏目</a> <a href="/tags/面试/" style="font-size: 12.5px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/02/21/轮播条（一）/">轮播条广告位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/调用系统本身的分享功能/">Android调用系统本身的分享功能</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/获取控件的高度/">Android开发之View宽和高的获取</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/自定义View、ViewGroup、控件/">自定义View、ViewGroup、控件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/缓存机制的应用/">缓存机制的应用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

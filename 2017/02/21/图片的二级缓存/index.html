@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>图片的二级缓存 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇总结了图片的二级缓存..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图片的二级缓存">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/图片的二级缓存/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本篇总结了图片的二级缓存..">
+<meta property="og:updated_time" content="2016-10-30T02:45:26.048Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图片的二级缓存">
+<meta name="twitter:description" content="本篇总结了图片的二级缓存..">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-图片的二级缓存" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/图片的二级缓存/" class="article-date">
+  <time datetime="2017-02-21T06:02:09.119Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/缓存/">缓存</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      图片的二级缓存
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇总结了图片的二级缓存..</p>
+<a id="more"></a>
+<h1 id="图片的二级缓存"><a href="#图片的二级缓存" class="headerlink" title="图片的二级缓存"></a>图片的二级缓存</h1><p>二级，即为内存缓存，本地缓存，网络，，三者一起构成了图片的存取机制。</p>
+<p>内存缓存拿不到就去本地拿。本地拿不到就去网络拿。当我们第一次获取A图片，肯定是是从网络获取的，网络获取后，图片A就存储到本地缓存，然后缓存到内存缓存。</p>
+<p>缓存主要利用的一个机制是Lru，（Least Recently Used）最近最少使用的。<br>而Lru和只要是利用两个类，LruCache 和 DiskLruCache。</p>
+<p>LruCache主要针对的是 内存缓存 （缓存）<br>DiskLruCache 主要针对的是 存储缓存 （本地）</p>
+<pre><code>安卓OOM发生的原因：图片分辨率过大，导致加载图片所需的内存超过系统给进程（app）分配的运行内存，内存爆掉，产生OOM
+核心解决办法： 利用BitmapFactory。Options的inSimpleSize，计算出合适的图片采样率，减小图片分辨率。
+</code></pre><p> <strong>二级缓存，就是  内存缓存 –&gt; 存储设备缓存 –&gt; 网络</strong></p>
+<h2 id="Lru的-取-存-删-三个操作"><a href="#Lru的-取-存-删-三个操作" class="headerlink" title="Lru的 取 存 删 三个操作"></a>Lru的 取 存 删 三个操作</h2><p>Lru遵循的原则是：少用的出局</p>
+<ol>
+<li>说到底，我就是想从缓存里面拿图片来显示，那么现明显，需要有一个 取 的过程。</li>
+<li>那么，既然需要 取 图片，那么在取之前一定要一个动作，那么就是 存的过程</li>
+<li>存放图片缓存的地方大小是有限的，既然是有限的，那么没用的或者说少用的多余的图片，就需要被清理出去，那么就会有一个 删 的过程</li>
+</ol>
+<p>二级缓存的主要使用LruCache算法，而Lru主要就是使用LruCache(内存）和DiskLruCache（存储设备缓存）这两个类。</p>
+<p>LruCache是一个泛型类，他内部采用了一个LinkedHashMap以强引用的方式存储外界的缓存对象，其提供了get和put方法来进行缓存的获取和存储，当缓存满时，LruCache会移除最近最少使用的对象，然后再添加新的对象。</p>
+<h2 id="LruCache的创建"><a href="#LruCache的创建" class="headerlink" title="LruCache的创建"></a>LruCache的创建</h2><pre><code>int maxMemory = (int)(Runtime.getRuntime().maxMemory)/1024);//缓存的总量大小
+int cacheSize = maxMemory/8；
+mMemoryCache = new LruCache&lt;String,Bitmap&gt;(cacheSize){
+@Override
+protected int sizeOf(String key,Bitmap bitmap){
+    return bitmap.getRowBytes()*bitmap.getHeight()/1024;
+    }
+
+}
+</code></pre><p>注：siseOf方法的作用是计算 缓存对象的大小。（这里的单位规格必须要和总容量一直，统一为KB比较好）</p>
+<p>需要注意的一点是，LruCache移除旧的缓存的时候会调用entryRemoved方法，如果需要的话可以在entryRemoved方法里面做一些相关的操作。</p>
+<p>byte除以1024得出kb，接着再除以1024，得出m.</p>
+<p>上面那段关于LruCache的代码的含义:</p>
+<p>就是我们把我们当前安卓app所能申请到的最大内存（maxMemory）的8分之1来用作内存缓存。这个就是我们指定的内存缓存的容器的大小，大小是自己指定的。</p>
+<h2 id="LruCache的-存-取-删"><a href="#LruCache的-存-取-删" class="headerlink" title="LruCache的 存 取 删"></a>LruCache的 存 取 删</h2><p>存储：mMemoryCache.get(key)</p>
+<p>获取：mMemoryCache.put(key,bitmap)</p>
+<p>删除：mMemory.remove(key)</p>
+<p>##DiskLruCache的创建</p>
+<p>DiskLruCache不能通过构造方法创建，他提供了Open方法用来创建自身，如下所示：</p>
+<pre><code>public static DiskLruCache open(File directory, int appVersion, 
+int valueCount, long maxSize)
+</code></pre><ol>
+<li>第一个参数：缓存文件的存放路径（重要）</li>
+<li>第二个参数：一般写 1 就好</li>
+<li>第二个参数： 一般写 1 就好</li>
+<li>第四个参数：存放缓存文件的容器的容量大小（重要）</li>
+</ol>
+<p>完整的open方法：</p>
+<pre><code>public static DiskLruCache open(File directory, int appVersion, int valueCount, long maxSize)throws IOException {
+    if (maxSize &lt;= 0) {
+        throw new IllegalArgumentException(&quot;maxSize &lt;= 0&quot;);
+    }
+    if (valueCount &lt;= 0) {
+        throw new IllegalArgumentException(&quot;valueCount &lt;= 0&quot;);
+    }
+    DiskLruCache cache = new DiskLruCache(directory, appVersion, valueCount, maxSize);
+    if (cache.journalFile.exists()) {
+        try {
+            cache.readJournal();
+            cache.processJournal();
+            cache.journalWriter = new BufferedWriter(new FileWriter(cache.journalFile, true),
+                    IO_BUFFER_SIZE);
+            return cache;
+        } catch (IOException journalIsCorrupt) {
+            cache.delete();
+        }
+    }
+
+    // create a new empty cache
+    directory.mkdirs();
+    cache = new DiskLruCache(directory, appVersion, valueCount, maxSize);
+    cache.rebuildJournal();
+    return cache;
+}
+</code></pre><p>一个典型的DiskLruCache应该这么创建：</p>
+<pre><code>    private static final long DISK_CACHE_SIZE= 1024 *1024 * 50; // 50M
+try {  
+    File cacheDir = getDiskCacheDir(context, &quot;bitmap&quot;);  
+    if (!cacheDir.exists()) {  
+        cacheDir.mkdirs();  
+    }  
+    mDiskLruCache = DiskLruCache.open(cacheDir, getAppVersion(context), 1, DISK_CACHE_SIZE);  
+} catch (IOException e) {  
+    e.printStackTrace();  
+}
+</code></pre><h2 id="DiskLruCache的存储（缓存添加）"><a href="#DiskLruCache的存储（缓存添加）" class="headerlink" title="DiskLruCache的存储（缓存添加）"></a>DiskLruCache的存储（缓存添加）</h2><p>DiskLruCache 的缓存添加是通过Editor完成的。</p>
+<p>Editor表示一个缓存对象的编辑对象，我们这里以图片缓存为例子，首先需要获取图片的url所对应的key，然后根据key就可以通过</p>
+<p>edit()来获取Editor对象。如果这个缓存正在被编辑，那么edit()就会返回null，也就是说， DiskLruCache不允许同时编辑一个缓存对象，图片的url不能只为作为key（因为url往往含有乱码），一般都是以图片的url的MD5的值作为key。</p>
+<h3 id="将图片url的MD5值作为缓存的key"><a href="#将图片url的MD5值作为缓存的key" class="headerlink" title="将图片url的MD5值作为缓存的key"></a>将图片url的MD5值作为缓存的key</h3><pre><code>    // 传入图片url，返回将图片的url的MD5的值（这个返回值的将作为存储缓存的 key）
+private String hashKeyFormUrl(String url) {
+    String cacheKey;
+    try {
+        final MessageDigest mDigest = MessageDigest.getInstance(&quot;MD5&quot;);
+        mDigest.update(url.getBytes());
+        cacheKey = bytesToHexString(mDigest.digest());
+    } catch (NoSuchAlgorithmException e) {
+        cacheKey = String.valueOf(url.hashCode());
+    }
+    // 返回将作为缓存的key值
+    return cacheKey;
+}
+
+// 将byte[]数组转为字符串的的方法  
+private String bytesToHexString(byte[] bytes) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i &lt; bytes.length; i++) {
+        String hex = Integer.toHexString(0xFF &amp; bytes[i]);
+        if (hex.length() == 1) {
+            sb.append(&apos;0&apos;);
+        }
+        sb.append(hex);
+    }
+    return sb.toString();
+}
+</code></pre><p>###DiskLruCache的可用的Editor对象,利用的Editor获得输入流将文件写入缓存目标地址</p>
+<p>将url转成key之后，就可以捕获的Editor对象了（前提是当前不存爱其他Editor对象）。我们获得这个Editor对象的目的就是想要拿到一个输出流。</p>
+<p>注意： 由于前面的我们在open方法中参数的第三个参数里面设置一个节点只能对应一个数据（第三个参数），所以啊，在输入流的参数 DISK_CACHE_INDEX 中我们把常量设置为 0 ，如下所示：</p>
+<pre><code>String key = hashKeyFormUrl(url);
+    DiskLruCache.Editor editor = mDiskLruCache.edit(key);
+    if (editor != null) {
+        OutputStream outputStream = editor.newOutputStream(DISK_CACHE_INDEX);
+
+    }
+</code></pre><p>得到输入流了，我们的目标就是把图片写入缓存目录，这是时候我们来看一下：下载图片并得写入文件系统的方法：</p>
+<pre><code>public boolean downloadUrlToStream(String urlString,
+        OutputStream outputStream) {
+    HttpURLConnection urlConnection = null;
+    BufferedOutputStream out = null;
+    BufferedInputStream in = null;
+
+    try {
+        final URL url = new URL(urlString);
+        urlConnection = (HttpURLConnection) url.openConnection();
+        in = new BufferedInputStream(urlConnection.getInputStream(),
+                IO_BUFFER_SIZE);
+        out = new BufferedOutputStream(outputStream, IO_BUFFER_SIZE);
+
+        int b;
+        while ((b = in.read()) != -1) {
+            out.write(b);
+        }
+        return true;
+    } catch (IOException e) {
+        Log.e(TAG, &quot;downloadBitmap failed.&quot; + e);
+    } finally {
+        if (urlConnection != null) {
+            urlConnection.disconnect();
+        }
+        MyUtils.close(out);
+        MyUtils.close(in);
+    }
+    return false;
+}
+</code></pre><p>经过上面的步骤，我们还差一步就可以真正的将图片写入到缓存的文件系统了，还差哪一步 —— editor.commit()</p>
+<p>通过commit来提交写入操作，如果图片下载的过程发生了异常，那么还可以通过Editor的abort()来回退整个操作，具体代码如下：</p>
+<pre><code>OutputStream outputStream = editor.newOutputStream(DISK_CACHE_INDEX);
+        if (downloadUrlToStream(url, outputStream)) {
+            editor.commit();
+        } else {
+            editor.abort();
+        }
+        mDiskLruCache.flush();
+</code></pre><h3 id="DiskLruCache进行-缓存添加-小结"><a href="#DiskLruCache进行-缓存添加-小结" class="headerlink" title="DiskLruCache进行 缓存添加 小结"></a>DiskLruCache进行 缓存添加 小结</h3><ol>
+<li>第一步，将图片的url的MD5值作为缓存的key</li>
+<li>第二步，得到key之后获得Editor对象获得输出流</li>
+<li>第三步，commit最终确定把图片写入到缓存，如果下载试下那么就利用abort进行回退</li>
+</ol>
+<h2 id="DiskLruCache的缓存查找-（获取缓存）"><a href="#DiskLruCache的缓存查找-（获取缓存）" class="headerlink" title="DiskLruCache的缓存查找 （获取缓存）"></a>DiskLruCache的缓存查找 （获取缓存）</h2><p>缓存查找的过程（和DiskLruCache的写入相似）：</p>
+<ol>
+<li>第一步，将图片的url的MD5值作为缓存查找的的key</li>
+<li>第二步，利用DiskLruCache的get方法得到一个Snapshot对象今儿得到文件输入流</li>
+<li>得到输入流了，自然可以得到Bitmap对象了</li>
+</ol>
+<p>注意:为了避免OOM，我们一般都不直接加载原图，都会利用BitmapFactory.Options来加载一张合适分辨率的图片，但是这个方式针对特殊的FileInputStream却行不通，因为FileInputStream是一种有序的文件流，而两次的decodeStream调用影响了文件流的位置属性，导致了第二次decodeStream时得到的是null，为了解决这个问题，可以通过文件流来得到他所对应的 文件描述符 ，然后在通过 BitmapFactory.decodeFileDescriptor方法来<strong>加载一张缩放过的图片</strong>。</p>
+<p>过程如下所示：</p>
+<pre><code>Bitmap bitmap = null;
+    String key = hashKeyFormUrl(url);
+    DiskLruCache.Snapshot snapShot = mDiskLruCache.get(key);
+    if (snapShot != null) {
+        FileInputStream fileInputStream = (FileInputStream)snapShot.getInputStream(DISK_CACHE_INDEX);
+        FileDescriptor fileDescriptor = fileInputStream.getFD();
+        bitmap = mImageResizer.decodeSampledBitmapFromFileDescriptor(fileDescriptor,reqWidth,reqHeight);
+        if (bitmap != null) {
+            addBitmapToMemoryCache(key, bitmap);
+        }
+    }
+</code></pre><h2 id="缓存的删除"><a href="#缓存的删除" class="headerlink" title="缓存的删除"></a>缓存的删除</h2><p>主要涉及两个方法，remove和delete。(remove方法，指定删除哪一个缓存)</p>
+<p>步骤：</p>
+<ol>
+<li>获取url的MD5，作为key</li>
+<li><p>调用 remove 方法，进行删除</p>
+<pre><code>try {  
+String imageUrl = &quot;http:XXX.jpg&quot;;    
+String key = hashKeyForDisk(imageUrl);    
+mDiskLruCache.remove(key);  
+</code></pre><p> } catch (IOException e) {  </p>
+<pre><code>e.printStackTrace();  
+</code></pre><p> }</p>
+</li>
+</ol>
+<p>delete()方法，删除所有缓存：DiskLruCache.delete();</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/图片的二级缓存/" data-id="cizf6szem0058loo5ar02w5l0" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/堆和栈的区别/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          堆和栈的区别
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/21/关于OkHttp的基本使用/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">关于OkHttp的基本使用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android-Studio/">Android Studio</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android案例/">Android案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android知识点/">Android知识点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android第三方库/">Android第三方库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android重点/">Android重点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android错误/">Android错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android面试/">Android面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bmob/">Bmob</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSDN博客/">CSDN博客</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Handler/">Handler</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo教程/">Hexo教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Http/">Http</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java面试/">Java面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Jsoup/">Jsoup</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Looper/">Looper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OOM解决方案/">OOM解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RxJava/">RxJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/命令总结/">命令总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/堆和栈/">堆和栈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/学习辅助工具/">学习辅助工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/常见错误/">常见错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/百度地图/">百度地图</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存机制/">缓存机制</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解决方案/">解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/项目SDK/">项目SDK</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-Studio/">Android Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android加载图片/">Android加载图片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android错误/">Android错误</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android面试/">Android面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bmob/">Bmob</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客/">CSDN博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fragment/">Fragment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Handler/">Handler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Http/">Http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsoup/">Jsoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Looper/">Looper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVC/">MVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDownPad2/">MarkDownPad2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OkHttp/">OkHttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RxJava/">RxJava</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sqlite/">Sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Studio/">Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View绘制/">View绘制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/assets/">assets</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlite/">sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下拉-上拉刷新/">下拉/上拉刷新</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/个推/">个推</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆和栈/">堆和栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/快捷键/">快捷键</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注册码/">注册码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/状态栏/">状态栏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统分享/">系统分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程/">线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络协议/">网络协议</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义/">自定义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义栏目/">自定义栏目</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 12.5px;">Android Studio</a> <a href="/tags/Android加载图片/" style="font-size: 10px;">Android加载图片</a> <a href="/tags/Android错误/" style="font-size: 17.5px;">Android错误</a> <a href="/tags/Android面试/" style="font-size: 10px;">Android面试</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Bmob/" style="font-size: 10px;">Bmob</a> <a href="/tags/CSDN博客/" style="font-size: 10px;">CSDN博客</a> <a href="/tags/Fragment/" style="font-size: 12.5px;">Fragment</a> <a href="/tags/Handler/" style="font-size: 10px;">Handler</a> <a href="/tags/Hexo/" style="font-size: 12.5px;">Hexo</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/JAVA/" style="font-size: 12.5px;">JAVA</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jsoup/" style="font-size: 10px;">Jsoup</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Looper/" style="font-size: 10px;">Looper</a> <a href="/tags/MVC/" style="font-size: 10px;">MVC</a> <a href="/tags/MVP/" style="font-size: 10px;">MVP</a> <a href="/tags/MarkDownPad2/" style="font-size: 10px;">MarkDownPad2</a> <a href="/tags/OkHttp/" style="font-size: 12.5px;">OkHttp</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Sqlite/" style="font-size: 10px;">Sqlite</a> <a href="/tags/Studio/" style="font-size: 10px;">Studio</a> <a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a> <a href="/tags/View绘制/" style="font-size: 10px;">View绘制</a> <a href="/tags/assets/" style="font-size: 10px;">assets</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/下拉-上拉刷新/" style="font-size: 10px;">下拉/上拉刷新</a> <a href="/tags/个推/" style="font-size: 10px;">个推</a> <a href="/tags/博客/" style="font-size: 15px;">博客</a> <a href="/tags/堆和栈/" style="font-size: 10px;">堆和栈</a> <a href="/tags/快捷键/" style="font-size: 10px;">快捷键</a> <a href="/tags/注册码/" style="font-size: 10px;">注册码</a> <a href="/tags/状态栏/" style="font-size: 10px;">状态栏</a> <a href="/tags/系统分享/" style="font-size: 10px;">系统分享</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/网络协议/" style="font-size: 10px;">网络协议</a> <a href="/tags/自定义/" style="font-size: 10px;">自定义</a> <a href="/tags/自定义栏目/" style="font-size: 10px;">自定义栏目</a> <a href="/tags/面试/" style="font-size: 12.5px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/02/21/轮播条（一）/">轮播条广告位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/调用系统本身的分享功能/">Android调用系统本身的分享功能</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/获取控件的高度/">Android开发之View宽和高的获取</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/自定义View、ViewGroup、控件/">自定义View、ViewGroup、控件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/缓存机制的应用/">缓存机制的应用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android开发高级进阶—多线程（实现简单下载器） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇总结了Android开发高级进阶——多线程（实现简单下载器）..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android开发高级进阶—多线程（实现简单下载器）">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/Android开发高级进阶—多线程（实现简单下载器）/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本篇总结了Android开发高级进阶——多线程（实现简单下载器）..">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2463568-8a680aeefd55ba40.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2016-09-07T10:08:07.124Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android开发高级进阶—多线程（实现简单下载器）">
+<meta name="twitter:description" content="本篇总结了Android开发高级进阶——多线程（实现简单下载器）..">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/2463568-8a680aeefd55ba40.gif?imageMogr2/auto-orient/strip">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Android开发高级进阶—多线程（实现简单下载器）" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/Android开发高级进阶—多线程（实现简单下载器）/" class="article-date">
+  <time datetime="2017-02-21T06:02:08.968Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android开发高级进阶—多线程（实现简单下载器）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇总结了Android开发高级进阶——多线程（实现简单下载器）..</p>
+<a id="more"></a>    
+<h1 id="Android开发高级进阶——多线程（实现简单下载器）"><a href="#Android开发高级进阶——多线程（实现简单下载器）" class="headerlink" title="Android开发高级进阶——多线程（实现简单下载器）"></a>Android开发高级进阶——多线程（实现简单下载器）</h1><p>每个Android应用在被启动时都会创建一个线程，这个线程称为主线程或UI线程，Android应用的所有操作都会运行在这个线程中。但是为了保证UI的流畅性，通常会将耗时操作放到子线程中，例如IO操作、网络请求等。而几乎每个Android应用都会涉及到网络请求等耗时操作，所以多线程对于Android来说变得至关重要。</p>
+<h2 id="什么是多线程？"><a href="#什么是多线程？" class="headerlink" title="什么是多线程？"></a>什么是多线程？</h2><p>线程：是进程中单一的连续控制流程/执行路径。</p>
+<p>多线程：多个线程并行执行。</p>
+<h2 id="二-为什么要使用多线程？"><a href="#二-为什么要使用多线程？" class="headerlink" title="二.为什么要使用多线程？"></a>二.为什么要使用多线程？</h2><p>使用多线程可以提高效率，并且不会使程序出现卡顿现象（比如ANR）。</p>
+<h2 id="三-什么时候使用多线程？"><a href="#三-什么时候使用多线程？" class="headerlink" title="三.什么时候使用多线程？"></a>三.什么时候使用多线程？</h2><p>Android3.0以及以后的版本中，禁止在主线程执行网络请求，否则会抛出异常，可见在UI线程中执行耗时操作是不推荐的行为。所以，在进行与耗时操作同步进行的操作时（即并行）使用多线程。</p>
+<h2 id="四-如何使用多线程？"><a href="#四-如何使用多线程？" class="headerlink" title="四.如何使用多线程？"></a>四.如何使用多线程？</h2><p>我们经常说Android中的主线程是线程不安全的，所以只能在主线程中更新UI。那么如何更新主线程且保证线程是安全的呢？</p>
+<p>Android中提供了保证线程安全的几种解决方案：</p>
+<ul>
+<li>使用Handler实现线程之间的通信。</li>
+<li>Activity.runOnUiThread(Runnable)：一般在Activity的Thread中运用。</li>
+<li>View.post(Runnable)</li>
+<li>View.postDelayed(Runnable, long)</li>
+</ul>
+<p>Android中的线程分为主线程（UI线程）和工作线程。</p>
+<ul>
+<li>主线程（UI线程）：程序运行时被创建的线程。</li>
+<li>工作线程：自己创建的线程。</li>
+</ul>
+<p>以上两个线程之间的通信最基本的有两种：</p>
+<h3 id="Thread和Runnable"><a href="#Thread和Runnable" class="headerlink" title="Thread和Runnable"></a>Thread和Runnable</h3><p>这里通过实现一个简单的下载器来学习Thread和Runnable。</p>
+<p>这个下载器就一个界面，包含一个输入框，一个进度条，用来显示下载进度，用来输入下载地址，一个按钮，用来开始下载。</p>
+<p>界面代码如下：activity_main.xml</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;RelativeLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+android:layout_width=&quot;match_parent&quot;
+android:layout_height=&quot;match_parent&quot;
+android:layout_marginLeft=&quot;16dp&quot;
+android:layout_marginTop=&quot;16dp&quot;
+tools:context=&quot;com.trampcr.downloaddemo.MainActivity&quot;&gt;
+
+&lt;EditText
+    android:id=&quot;@+id/et_url&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:layout_marginTop=&quot;20dp&quot;
+    android:hint=&quot;请输入下载地址&quot; /&gt;
+
+&lt;ProgressBar
+    android:id=&quot;@+id/pb_down_load&quot;
+    style=&quot;@style/Widget.AppCompat.ProgressBar.Horizontal&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:layout_below=&quot;@id/et_url&quot;
+    android:layout_marginTop=&quot;30dp&quot;
+    android:max=&quot;100&quot; /&gt;
+
+&lt;TextView
+    android:id=&quot;@+id/tv_progress&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:layout_below=&quot;@id/pb_down_load&quot;
+    android:layout_marginTop=&quot;20dp&quot;
+    android:text=&quot;下载进度&quot;
+    android:textColor=&quot;#000000&quot; /&gt;
+
+&lt;Button
+    android:id=&quot;@+id/btn_start_download&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:layout_below=&quot;@id/tv_progress&quot;
+    android:layout_centerHorizontal=&quot;true&quot;
+    android:layout_marginTop=&quot;50dp&quot;
+    android:background=&quot;@drawable/btn_style&quot;
+    android:text=&quot;开始下载&quot;
+    android:textColor=&quot;#000000&quot; /&gt;
+
+&lt;/RelativeLayout&gt;
+</code></pre><p>细心的人可能会注意到这里的按钮用了一个背景@drawable/btn_style，这里是自定义按钮的形状。代码如下：btn_style.xml</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+android:shape=&quot;rectangle&quot;&gt;
+&lt;corners android:topLeftRadius=&quot;10dp&quot;
+    android:radius=&quot;8dp&quot;
+    android:topRightRadius=&quot;10dp&quot;
+    android:bottomLeftRadius=&quot;10dp&quot;
+    android:bottomRightRadius=&quot;10dp&quot; /&gt;
+&lt;stroke android:color=&quot;#000000&quot;
+    android:width=&quot;0.7dp&quot;/&gt;
+&lt;/shape&gt;
+</code></pre><p>MainActivity.java</p>
+<pre><code>public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+//public static final String DOWNLOAD_URL = &quot;http://psoft.33lc.com:801/small/rootexplorer_33lc.apk&quot;;
+private Button mBtnStartDownload;
+private EditText mEtUrl;
+private String mUrl;
+private ProgressBar mPbDownload;
+private TextView mTvProgress;
+
+private Handler mHandler = new DownloadHandler(this);
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    mEtUrl = (EditText) findViewById(R.id.et_url);
+    mBtnStartDownload = (Button) findViewById(R.id.btn_start_download);
+    mPbDownload = (ProgressBar) findViewById(R.id.pb_down_load);
+    mTvProgress = (TextView) findViewById(R.id.tv_progress);
+
+    mBtnStartDownload.setOnClickListener(this);
+}
+
+@Override
+public void onClick(View v) {
+    mUrl = mEtUrl.getText().toString().trim();
+    new Thread(new Runnable() {
+        @Override
+        public void run() {
+            download(mUrl);
+        }
+    }).start();
+}
+
+private void download(String mUrl) {
+    try {
+        URL url = new URL(mUrl);
+        URLConnection urlConnection = url.openConnection();
+        int contentLength = urlConnection.getContentLength(); //下载文件大小
+        InputStream inputStream= urlConnection.getInputStream();
+        String downloadFolderName = Environment.getExternalStorageDirectory() + File.separator + &quot;trampcr&quot; + File.separator;
+        File file = new File(downloadFolderName);
+        if (!file.exists()){
+            file.mkdir();
+        }
+        String fileName = downloadFolderName + &quot;zxm.apk&quot;;
+        File apkFile = new File(fileName);
+        if (apkFile.exists()) {
+            apkFile.delete();
+        }
+        int downloadSize = 0;
+        byte[] buff = new byte[1024];
+        int length = 0;
+        OutputStream outputStream = new FileOutputStream(fileName);
+        while ((length = inputStream.read(buff)) != -1) {
+            outputStream.write(buff, 0, length);
+            downloadSize += length;
+            int progress = downloadSize * 100 / contentLength;
+            Message msg = mHandler.obtainMessage();
+            msg.what = 0;
+            msg.obj = progress;
+            mHandler.sendMessage(msg);
+        }
+        outputStream.close();
+        inputStream.close();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+public static class DownloadHandler extends Handler{
+    public final WeakReference&lt;MainActivity&gt; weakRefActivity;
+
+    public DownloadHandler(MainActivity mainActivity) {
+        weakRefActivity = new WeakReference&lt;MainActivity&gt;(mainActivity);
+    }
+
+    @Override
+    public void handleMessage(Message msg) {
+        super.handleMessage(msg);
+        MainActivity activity = weakRefActivity.get();//判断是否被回收
+        switch (msg.what){
+            case 0:
+                int progress = (int) msg.obj;
+                activity.mPbDownload.setProgress(progress);
+                activity.mTvProgress.setText(&quot;下载进度：&quot; + progress + &quot;%&quot;);
+                if (progress == 100){
+                    Toast.makeText(activity, &quot;下载完成&quot;, Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+        }
+    }
+}
+</code></pre><p>所需要的权限：</p>
+<pre><code>&lt;uses-permission android:name=&quot;android.permission.INTERNET&quot;/&gt;
+</code></pre><p>效果如如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2463568-8a680aeefd55ba40.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<p>注：这里面用到了一个我不太熟悉的知识：WeakReference的理解与使用</p>
+<p>文／trampcr（简书作者）<br>原文链接：<a href="http://www.jianshu.com/p/6a558a23084a" target="_blank" rel="external">http://www.jianshu.com/p/6a558a23084a</a><br>著作权归作者所有，转载请联系作者获得授权，并标注“简书作者”。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/Android开发高级进阶—多线程（实现简单下载器）/" data-id="cizf6sz7e000rloo5ic74my41" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/Android开发高级进阶（二）—多线程（实现简单下载器）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Android开发高级进阶（二）—多线程（实现简单下载器）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/21/Android应用界面开发—Handler（实现倒计时）/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Android应用界面开发——Handler（实现倒计时）onProgressUpdate</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android-Studio/">Android Studio</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android案例/">Android案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android知识点/">Android知识点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android第三方库/">Android第三方库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android重点/">Android重点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android错误/">Android错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android面试/">Android面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bmob/">Bmob</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSDN博客/">CSDN博客</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Handler/">Handler</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo教程/">Hexo教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Http/">Http</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java面试/">Java面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Jsoup/">Jsoup</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Looper/">Looper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OOM解决方案/">OOM解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RxJava/">RxJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/命令总结/">命令总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/堆和栈/">堆和栈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/学习辅助工具/">学习辅助工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/常见错误/">常见错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/百度地图/">百度地图</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存机制/">缓存机制</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解决方案/">解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/项目SDK/">项目SDK</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-Studio/">Android Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android加载图片/">Android加载图片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android错误/">Android错误</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android面试/">Android面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bmob/">Bmob</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客/">CSDN博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fragment/">Fragment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Handler/">Handler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Http/">Http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsoup/">Jsoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Looper/">Looper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVC/">MVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDownPad2/">MarkDownPad2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OkHttp/">OkHttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RxJava/">RxJava</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sqlite/">Sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Studio/">Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View绘制/">View绘制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/assets/">assets</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlite/">sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下拉-上拉刷新/">下拉/上拉刷新</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/个推/">个推</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆和栈/">堆和栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/快捷键/">快捷键</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注册码/">注册码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/状态栏/">状态栏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统分享/">系统分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程/">线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络协议/">网络协议</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义/">自定义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义栏目/">自定义栏目</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 12.5px;">Android Studio</a> <a href="/tags/Android加载图片/" style="font-size: 10px;">Android加载图片</a> <a href="/tags/Android错误/" style="font-size: 17.5px;">Android错误</a> <a href="/tags/Android面试/" style="font-size: 10px;">Android面试</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Bmob/" style="font-size: 10px;">Bmob</a> <a href="/tags/CSDN博客/" style="font-size: 10px;">CSDN博客</a> <a href="/tags/Fragment/" style="font-size: 12.5px;">Fragment</a> <a href="/tags/Handler/" style="font-size: 10px;">Handler</a> <a href="/tags/Hexo/" style="font-size: 12.5px;">Hexo</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/JAVA/" style="font-size: 12.5px;">JAVA</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jsoup/" style="font-size: 10px;">Jsoup</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Looper/" style="font-size: 10px;">Looper</a> <a href="/tags/MVC/" style="font-size: 10px;">MVC</a> <a href="/tags/MVP/" style="font-size: 10px;">MVP</a> <a href="/tags/MarkDownPad2/" style="font-size: 10px;">MarkDownPad2</a> <a href="/tags/OkHttp/" style="font-size: 12.5px;">OkHttp</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Sqlite/" style="font-size: 10px;">Sqlite</a> <a href="/tags/Studio/" style="font-size: 10px;">Studio</a> <a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a> <a href="/tags/View绘制/" style="font-size: 10px;">View绘制</a> <a href="/tags/assets/" style="font-size: 10px;">assets</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/下拉-上拉刷新/" style="font-size: 10px;">下拉/上拉刷新</a> <a href="/tags/个推/" style="font-size: 10px;">个推</a> <a href="/tags/博客/" style="font-size: 15px;">博客</a> <a href="/tags/堆和栈/" style="font-size: 10px;">堆和栈</a> <a href="/tags/快捷键/" style="font-size: 10px;">快捷键</a> <a href="/tags/注册码/" style="font-size: 10px;">注册码</a> <a href="/tags/状态栏/" style="font-size: 10px;">状态栏</a> <a href="/tags/系统分享/" style="font-size: 10px;">系统分享</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/网络协议/" style="font-size: 10px;">网络协议</a> <a href="/tags/自定义/" style="font-size: 10px;">自定义</a> <a href="/tags/自定义栏目/" style="font-size: 10px;">自定义栏目</a> <a href="/tags/面试/" style="font-size: 12.5px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/02/21/轮播条（一）/">轮播条广告位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/调用系统本身的分享功能/">Android调用系统本身的分享功能</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/获取控件的高度/">Android开发之View宽和高的获取</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/自定义View、ViewGroup、控件/">自定义View、ViewGroup、控件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/缓存机制的应用/">缓存机制的应用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

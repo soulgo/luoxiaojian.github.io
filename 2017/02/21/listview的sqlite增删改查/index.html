@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>sqlite与listview结合案例 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇总结了Android Bitmap 知识点梳理..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqlite与listview结合案例">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/listview的sqlite增删改查/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本篇总结了Android Bitmap 知识点梳理..">
+<meta property="og:updated_time" content="2016-11-08T07:41:53.915Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sqlite与listview结合案例">
+<meta name="twitter:description" content="本篇总结了Android Bitmap 知识点梳理..">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-listview的sqlite增删改查" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/listview的sqlite增删改查/" class="article-date">
+  <time datetime="2017-02-21T06:02:09.006Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android重点/">Android重点</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      sqlite与listview结合案例
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇总结了Android Bitmap 知识点梳理..</p>
+<a id="more"></a>
+<h1 id="SQLite数据类型"><a href="#SQLite数据类型" class="headerlink" title="SQLite数据类型"></a>SQLite数据类型</h1><p>一般数据采用的固定的静态数据类型，而SQLite采用的是动态数据类型，会根据存入值自动判断。SQLite具有以下五种常用的数据类型：</p>
+<ol>
+<li>NULL: 这个值为空值;</li>
+<li>VARCHAR(n)：长度不固定且其最大长度为 n 的字串，n不能超过 4000;</li>
+<li>CHAR(n)：长度固定为n的字串，n不能超过 254;</li>
+<li>INTEGER: 值被标识为整数,依据值的大小可以依次被存储为1,2,3,4,5,6,7,8;</li>
+<li>REAL: 所有值都是浮动的数值,被存储为8字节的IEEE浮动标记序号;</li>
+<li>TEXT: 值为文本字符串,使用数据库编码存储(TUTF-8, UTF-16BE or UTF-16-LE);</li>
+<li>BLOB: 值是BLOB数据块，以输入的数据格式进行存储。如何输入就如何存储,不改  变格式;</li>
+<li>DATA ：包含了 年份、月份、日期;</li>
+<li>TIME： 包含了 小时、分钟、秒;</li>
+</ol>
+<h2 id="SQLite常用的方法"><a href="#SQLite常用的方法" class="headerlink" title="SQLite常用的方法"></a>SQLite常用的方法</h2><blockquote>
+<p>创建数据库</p>
+<p>openOrCreateDatabase(Stringpath,SQLiteDatabase.CursorFactory  factory)</p>
+<p>插入数据</p>
+<p>insert(String table,String nullColumnHack,ContentValues  values)</p>
+<p>删除数据</p>
+<p>delete(String table,String whereClause,String[]  whereArgs)</p>
+<p>更新数据</p>
+<p>update(String table,ContentValues values,String whereClause,String[]  whereArgs) </p>
+</blockquote>
+<h3 id="insert插入数据"><a href="#insert插入数据" class="headerlink" title="insert插入数据"></a>insert插入数据</h3><blockquote>
+<p>insert(String table,String nullColumnHack,ContentValues  values)<br>传入的参数:1,表名,2,空列的默认值,3,ContentValues,类似于hashMap,是一种储存的机制,用法为:</p>
+</blockquote>
+<pre><code>/**
+ * 创建一个用来插入数据的方法
+ *
+ * @param name  姓名
+ * @param sex   性别
+ * @param age   年龄
+ * @param hobby 爱好
+ */
+public void insert(String name, String sex, String age, String hobby) {
+    //让数据库可写
+    SQLiteDatabase database = getWritableDatabase();
+    /*
+    类似于HashMap 都有键值对
+    key 对应的列表中的某一列的名称,字段
+    value 对应字段要插入的值
+     */
+    ContentValues values = new ContentValues();
+    values.put(&quot;name&quot;, name);
+    values.put(&quot;sex&quot;, sex);
+    values.put(&quot;age&quot;, age);
+    values.put(&quot;hobby&quot;, hobby);
+    //插入
+    database.insert(TABLE_NAME, null, values);
+    //插入完成后关闭,以免造成内存泄漏
+    database.close();
+
+}
+</code></pre><h3 id="delete删除数据"><a href="#delete删除数据" class="headerlink" title="delete删除数据"></a>delete删除数据</h3><blockquote>
+<p>delete(String table,String whereClause,String[]  whereArgs)<br>传入的参数:</p>
+<ol>
+<li>参数1, 表名称   </li>
+<li>参数2 , 删除条件</li>
+<li>参数3 , 删除条件值数组,用法为:</li>
+</ol>
+</blockquote>
+<pre><code>/**
+ * 创建一个删除数据的方法,传入的参数越多,删除时越精确的找到要删除的哪一行
+ *
+ * @param name
+ * @param sex
+ * @param age
+ * @param hobby
+ */
+public void delete(int id, String name, String sex, String age, String hobby) {
+    SQLiteDatabase database = getWritableDatabase();
+    /*
+    删除的条件,当id = 传入的参数id时,sex = 传入的参数sex时,age = 传入的age,hobby = 传入的hobby时
+    当条件都满足时才删除这行数据,一个条件不满足就删除失败
+     */
+    String where = &quot;id=? and name = ? and sex = ? and age = ? and hobby = ?&quot;;
+    //删除条件的参数
+    String[] whereArgs = {id + &quot;&quot;, name, sex, age, hobby};
+    database.delete(TABLE_NAME, where, whereArgs);
+    database.close();
+}
+
+/**
+ * 再创建一个删除一个删除的方法,条件只有一个
+ */
+public void delete(int id) {
+    SQLiteDatabase database = getWritableDatabase();
+    //当条件满足id = 传入的参数的时候,就删除那整行数据,有可能有好几行都满足这个条件,满足的全部都删除
+    String where = &quot;id = ?&quot;;
+    String[] whereArgs = {id + &quot;&quot;};
+    database.delete(TABLE_NAME, where, whereArgs);
+    database.close();
+}
+</code></pre><h3 id="updata修改数据"><a href="#updata修改数据" class="headerlink" title="updata修改数据"></a>updata修改数据</h3><blockquote>
+<p>update(String table,ContentValues values,String  whereClause, String[]  whereArgs)方法<br>传入的参数:</p>
+<ol>
+<li>参数1  表名称</li>
+<li>参数2  跟行列ContentValues类型的键值对Key-Value</li>
+<li>参数3  更新条件（where字句）</li>
+<li>参数4  更新条件数组</li>
+</ol>
+</blockquote>
+<pre><code>/**
+ * 创建一个修改数据的方法
+ * @param id   条件,修改id为&quot;id&quot;的那一行数据
+ * @param name
+ * @param sex
+ * @param age
+ * @param hobby
+ */
+public void updata(int id,String name, String sex, String age, String hobby) {
+    SQLiteDatabase database = getWritableDatabase();
+//        update(String table,ContentValues values,String  whereClause, String[]  whereArgs)
+    String where = &quot;id = ?&quot;;
+    String[] whereArgs = {id+&quot;&quot;};
+    ContentValues values = new ContentValues();
+    values.put(&quot;name&quot;, name);
+    values.put(&quot;sex&quot;, sex);
+    values.put(&quot;age&quot;, age);
+    values.put(&quot;hobby&quot;, hobby);
+    //参数1  表名称    参数2  跟行列ContentValues类型的键值对Key-Value
+   // 参数3  更新条件（where字句）    参数4  更新条件数组
+    database.update(TABLE_NAME, values,where, whereArgs);
+    database.close();
+</code></pre><h3 id="query查找数据"><a href="#query查找数据" class="headerlink" title="query查找数据"></a>query查找数据</h3><blockquote>
+<p>query(String table,String[] columns,String selection,String[]  selectionArgs,String groupBy,String having,String orderBy,String limit)<br>传入参数:</p>
+<ol>
+<li>参数table:表名称</li>
+<li>参数columns:列名称数组</li>
+<li>参数selection:条件字句，相当于where</li>
+<li>参数selectionArgs:条件字句，参数数组</li>
+<li>参数groupBy:分组列</li>
+<li>参数having:分组条件</li>
+<li>参数orderBy:排序列</li>
+<li>参数limit:分页查询限制</li>
+</ol>
+</blockquote>
+<pre><code>  /**
+ * 创建一个查找数据库的方法
+ *
+ * public  Cursor query(String table,String[] columns,String selection,String[]  selectionArgs,String groupBy,String having,String orderBy,String limit);
+ 各个参数的意义说明：
+ 参数table:表名称
+ 参数columns:列名称数组
+ 参数selection:条件字句，相当于where
+ 参数selectionArgs:条件字句，参数数组
+ 参数groupBy:分组列
+ 参数having:分组条件
+ 参数orderBy:排序列
+ 参数limit:分页查询限制
+ 参数Cursor:返回值，相当于结果集ResultSet
+ Cursor是一个游标接口，提供了遍历查询结果的方法，如移动指针方法move()，获得列值方法getString()等.
+ */
+public Cursor query() {
+    //数据库可读
+    SQLiteDatabase database = getReadableDatabase();
+    //查找
+    Cursor query = database.query(TABLE_NAME, null, null, null, null, null, null);
+    return query;
+}
+</code></pre><blockquote>
+<p>循环遍历,拿到数据</p>
+</blockquote>
+<pre><code> /**
+ * 通过查找数据库,拿到里面的数据
+ */
+private List&lt;Map&lt;String, Object&gt;&gt; getData() {
+    list = new ArrayList&lt;&gt;();
+    Cursor query = MyDataBase.getInstances(MainActivity.this).query();
+    /*
+    游标cursor默认是在-1的位置,query.moveToFirst()将游标移动到第一行,如果不写这个就会报
+     Caused by: android.database.CursorIndexOutOfBoundsException: Index -1 requested, with a size of 12
+     这个问题坑爹,以后一定要注意
+     */
+    if (query.moveToFirst()) {
+        do {
+            String name = query.getString(query.getColumnIndex(&quot;name&quot;));
+            String sex = query.getString(query.getColumnIndex(&quot;sex&quot;));
+            String age = query.getString(query.getColumnIndex(&quot;age&quot;));
+            String hobby = query.getString(query.getColumnIndex(&quot;hobby&quot;));
+            int id = query.getInt(query.getColumnIndex(&quot;id&quot;));
+            Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
+            map.put(&quot;id&quot;, id);
+            map.put(&quot;name&quot;, name);
+            map.put(&quot;sex&quot;, sex);
+            map.put(&quot;age&quot;, age);
+            map.put(&quot;hobby&quot;, hobby);
+            list.add(map);
+        } while (query.moveToNext());
+    }
+    //关闭查询游标
+    query.close();
+    return list;
+}
+</code></pre><h3 id="操作数据库的类"><a href="#操作数据库的类" class="headerlink" title="操作数据库的类"></a>操作数据库的类</h3><pre><code>package com.duanlian.databasedemo;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class MyDataBase extends SQLiteOpenHelper {
+//数据库名字
+public static final String DB_NAME = &quot;Students.db&quot;;
+//数据库版本
+public static final int DB_VERSION = 1;
+//表名
+public static final String TABLE_NAME = &quot;student&quot;;
+public static MyDataBase myDataBase;
+
+/**
+ * 单例模式返回数据库
+ *
+ * @param context 上下文
+ * @return 数据库对象
+ */
+public static MyDataBase getInstances(Context context) {
+    if (myDataBase == null) {
+        return new MyDataBase(context);
+    } else {
+        return myDataBase;
+    }
+}
+
+
+//上下文,数据库名字,数据库工厂,版本号
+public MyDataBase(Context context) {
+    super(context, DB_NAME, null, DB_VERSION);
+}
+
+//此方法中创建表
+@Override
+public void onCreate(SQLiteDatabase sqLiteDatabase) {
+    //这个有个坑,create table&quot;+&quot; &quot; + TABLE_NAME 中间一定要加空格,别问为什么,我也不知道,不加就语法错误,吐血
+    sqLiteDatabase.execSQL(&quot;create table&quot; + &quot; &quot; + TABLE_NAME + &quot;(id INTEGER PRIMARY KEY AUTOINCREMENT,name text,sex text,age text,hobby text);&quot;);
+
+}
+
+/**
+ * 用来更新数据库版本的
+ * onCreate方法只是在第一次安装app的时候会调用,之后的数据库要更改的话,必须使用数据库版本上升,或者卸载了重新安装
+ *
+ * @param sqLiteDatabase 数据库
+ * @param oldVersion     老的版本号
+ * @param newVersion     更新后的版本号
+ */
+@Override
+public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+    if (newVersion &gt; oldVersion) {
+        //删除老表
+        sqLiteDatabase.execSQL(&quot;drop&quot; + TABLE_NAME);
+        //重新创建表
+        onCreate(sqLiteDatabase);
+    }
+
+}
+
+/**
+ * 创建一个用来插入数据的方法
+ *
+ * @param name  姓名
+ * @param sex   性别
+ * @param age   年龄
+ * @param hobby 爱好
+ */
+public void insert(String name, String sex, String age, String hobby) {
+    //让数据库可写
+    SQLiteDatabase database = getWritableDatabase();
+    /*
+    类似于HashMap 都有键值对
+    key 对应的列表中的某一列的名称,字段
+    value 对应字段要插入的值
+     */
+    ContentValues values = new ContentValues();
+    values.put(&quot;name&quot;, name);
+    values.put(&quot;sex&quot;, sex);
+    values.put(&quot;age&quot;, age);
+    values.put(&quot;hobby&quot;, hobby);
+    //插入
+    database.insert(TABLE_NAME, null, values);
+    //插入完成后关闭,以免造成内存泄漏
+    database.close();
+
+}
+
+
+/**
+ * 创建一个查找数据库的方法
+ *
+ * public  Cursor query(String table,String[] columns,String selection,String[]  selectionArgs,String groupBy,String having,String orderBy,String limit);
+ 各个参数的意义说明：
+ 参数table:表名称
+ 参数columns:列名称数组
+ 参数selection:条件字句，相当于where
+ 参数selectionArgs:条件字句，参数数组
+ 参数groupBy:分组列
+ 参数having:分组条件
+ 参数orderBy:排序列
+ 参数limit:分页查询限制
+ 参数Cursor:返回值，相当于结果集ResultSet
+ Cursor是一个游标接口，提供了遍历查询结果的方法，如移动指针方法move()，获得列值方法getString()等.
+ */
+public Cursor query() {
+    //数据库可读
+    SQLiteDatabase database = getReadableDatabase();
+    //查找
+    Cursor query = database.query(TABLE_NAME, null, null, null, null, null, null);
+    return query;
+}
+
+/**
+ * 创建一个删除数据的方法,传入的参数越多,删除时越精确的找到要删除的哪一行
+ *
+ * @param name
+ * @param sex
+ * @param age
+ * @param hobby
+ */
+public void delete(int id, String name, String sex, String age, String hobby) {
+    SQLiteDatabase database = getWritableDatabase();
+    /*
+    删除的条件,当id = 传入的参数id时,sex = 传入的参数sex时,age = 传入的age,hobby = 传入的hobby时
+    当条件都满足时才删除这行数据,一个条件不满足就删除失败
+     */
+    String where = &quot;id=? and name = ? and sex = ? and age = ? and hobby = ?&quot;;
+    //删除条件的参数
+    String[] whereArgs = {id + &quot;&quot;, name, sex, age, hobby};
+    database.delete(TABLE_NAME, where, whereArgs);
+    database.close();
+}
+
+/**
+ * 再创建一个删除一个删除的方法,条件只有一个
+ */
+public void delete(int id) {
+    SQLiteDatabase database = getWritableDatabase();
+    //当条件满足id = 传入的参数的时候,就删除那整行数据,有可能有好几行都满足这个条件,满足的全部都删除
+    String where = &quot;id = ?&quot;;
+    String[] whereArgs = {id + &quot;&quot;};
+    database.delete(TABLE_NAME, where, whereArgs);
+    database.close();
+}
+
+/**
+ * 创建一个修改数据的方法
+ * @param id   条件,修改id为&quot;id&quot;的那一行数据
+ * @param name
+ * @param sex
+ * @param age
+ * @param hobby
+ */
+public void updata(int id,String name, String sex, String age, String hobby) {
+    SQLiteDatabase database = getWritableDatabase();
+//        update(String table,ContentValues values,String  whereClause, String[]  whereArgs)
+    String where = &quot;id = ?&quot;;
+    String[] whereArgs = {id+&quot;&quot;};
+    ContentValues values = new ContentValues();
+    values.put(&quot;name&quot;, name);
+    values.put(&quot;sex&quot;, sex);
+    values.put(&quot;age&quot;, age);
+    values.put(&quot;hobby&quot;, hobby);
+    //参数1  表名称    参数2  跟行列ContentValues类型的键值对Key-Value
+   // 参数3  更新条件（where字句）    参数4  更新条件数组
+    database.update(TABLE_NAME, values,where, whereArgs);
+
+    database.close();
+        }
+}
+</code></pre><p>源代码：<a href="https://github.com/luojunquan/ListViewSqlite.git" title="源代码" target="_blank" rel="external">https://github.com/luojunquan/ListViewSqlite.git</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/listview的sqlite增删改查/" data-id="cizf6szcp0040loo5oic66sgg" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sqlite/">sqlite</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/Looper总结/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Looper知识总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/21/Jsoup知识总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Jsoup方法总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android-Studio/">Android Studio</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android案例/">Android案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android知识点/">Android知识点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android第三方库/">Android第三方库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android重点/">Android重点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android错误/">Android错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android面试/">Android面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bmob/">Bmob</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSDN博客/">CSDN博客</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Handler/">Handler</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo教程/">Hexo教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Http/">Http</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java面试/">Java面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Jsoup/">Jsoup</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Looper/">Looper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OOM解决方案/">OOM解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RxJava/">RxJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/命令总结/">命令总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/堆和栈/">堆和栈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/学习辅助工具/">学习辅助工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/常见错误/">常见错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/百度地图/">百度地图</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存机制/">缓存机制</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解决方案/">解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/项目SDK/">项目SDK</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-Studio/">Android Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android加载图片/">Android加载图片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android错误/">Android错误</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android面试/">Android面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bmob/">Bmob</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客/">CSDN博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fragment/">Fragment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Handler/">Handler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Http/">Http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsoup/">Jsoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Looper/">Looper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVC/">MVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDownPad2/">MarkDownPad2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OkHttp/">OkHttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RxJava/">RxJava</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sqlite/">Sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Studio/">Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View绘制/">View绘制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/assets/">assets</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlite/">sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下拉-上拉刷新/">下拉/上拉刷新</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/个推/">个推</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆和栈/">堆和栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/快捷键/">快捷键</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注册码/">注册码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/状态栏/">状态栏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统分享/">系统分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程/">线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络协议/">网络协议</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义/">自定义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义栏目/">自定义栏目</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 12.5px;">Android Studio</a> <a href="/tags/Android加载图片/" style="font-size: 10px;">Android加载图片</a> <a href="/tags/Android错误/" style="font-size: 17.5px;">Android错误</a> <a href="/tags/Android面试/" style="font-size: 10px;">Android面试</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Bmob/" style="font-size: 10px;">Bmob</a> <a href="/tags/CSDN博客/" style="font-size: 10px;">CSDN博客</a> <a href="/tags/Fragment/" style="font-size: 12.5px;">Fragment</a> <a href="/tags/Handler/" style="font-size: 10px;">Handler</a> <a href="/tags/Hexo/" style="font-size: 12.5px;">Hexo</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/JAVA/" style="font-size: 12.5px;">JAVA</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jsoup/" style="font-size: 10px;">Jsoup</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Looper/" style="font-size: 10px;">Looper</a> <a href="/tags/MVC/" style="font-size: 10px;">MVC</a> <a href="/tags/MVP/" style="font-size: 10px;">MVP</a> <a href="/tags/MarkDownPad2/" style="font-size: 10px;">MarkDownPad2</a> <a href="/tags/OkHttp/" style="font-size: 12.5px;">OkHttp</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Sqlite/" style="font-size: 10px;">Sqlite</a> <a href="/tags/Studio/" style="font-size: 10px;">Studio</a> <a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a> <a href="/tags/View绘制/" style="font-size: 10px;">View绘制</a> <a href="/tags/assets/" style="font-size: 10px;">assets</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/下拉-上拉刷新/" style="font-size: 10px;">下拉/上拉刷新</a> <a href="/tags/个推/" style="font-size: 10px;">个推</a> <a href="/tags/博客/" style="font-size: 15px;">博客</a> <a href="/tags/堆和栈/" style="font-size: 10px;">堆和栈</a> <a href="/tags/快捷键/" style="font-size: 10px;">快捷键</a> <a href="/tags/注册码/" style="font-size: 10px;">注册码</a> <a href="/tags/状态栏/" style="font-size: 10px;">状态栏</a> <a href="/tags/系统分享/" style="font-size: 10px;">系统分享</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/网络协议/" style="font-size: 10px;">网络协议</a> <a href="/tags/自定义/" style="font-size: 10px;">自定义</a> <a href="/tags/自定义栏目/" style="font-size: 10px;">自定义栏目</a> <a href="/tags/面试/" style="font-size: 12.5px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/02/21/轮播条（一）/">轮播条广告位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/调用系统本身的分享功能/">Android调用系统本身的分享功能</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/获取控件的高度/">Android开发之View宽和高的获取</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/自定义View、ViewGroup、控件/">自定义View、ViewGroup、控件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/缓存机制的应用/">缓存机制的应用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

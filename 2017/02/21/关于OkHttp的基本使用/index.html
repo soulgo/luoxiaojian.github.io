@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>关于OkHttp的基本使用 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本篇总结了关于OkHttp的基本使用..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于OkHttp的基本使用">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/关于OkHttp的基本使用/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本篇总结了关于OkHttp的基本使用..">
+<meta property="og:updated_time" content="2016-08-30T02:31:46.458Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于OkHttp的基本使用">
+<meta name="twitter:description" content="本篇总结了关于OkHttp的基本使用..">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-关于OkHttp的基本使用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/关于OkHttp的基本使用/" class="article-date">
+  <time datetime="2017-02-21T06:02:09.055Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android第三方库/">Android第三方库</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      关于OkHttp的基本使用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇总结了关于OkHttp的基本使用..</p>
+<a id="more"></a>
+<p>##okhttp的简单使用</p>
+<blockquote>
+<p>主要包含：</p>
+</blockquote>
+<ul>
+<li>一般的get请求</li>
+<li>一般的post请求</li>
+<li>基于Http的文件上传</li>
+<li>文件下载</li>
+<li>加载图片</li>
+<li>支持请求回调，直接返回对象、对象集合</li>
+<li>支持session的保持</li>
+</ul>
+<blockquote>
+<p>使用okhttp需要导入okhttp jar包和okio！</p>
+</blockquote>
+<h2 id="Http-Get"><a href="#Http-Get" class="headerlink" title="Http Get"></a>Http Get</h2><p>对了网络加载库，那么最常见的肯定就是http get请求了，比如获取一个网页的内容。</p>
+<pre><code>//创建okHttpClient对象
+OkHttpClient mOkHttpClient = new OkHttpClient();
+//创建一个Request
+final Request request = new Request.Builder()
+                .url(&quot;https://github.com/luojunquan&quot;)
+                .build();
+//new call
+Call call = mOkHttpClient.newCall(request); 
+//请求加入调度
+call.enqueue(new Callback()
+    {
+        @Override
+        public void onFailure(Request request, IOException e)
+        {
+        }
+
+        @Override
+        public void onResponse(final Response response) throws IOException
+        {
+                //String htmlStr =  response.body().string();
+        }
+    });             
+</code></pre><ol>
+<li>以上就是发送一个get请求的步骤，首先构造一个Request对象，参数最起码有个url，当然你可以通过Request.Builder设置更多的参数比如：header、method等。</li>
+<li>然后通过request的对象去构造得到一个Call对象，类似于将你的请求封装成了任务，既然是任务，就会有execute()和cancel()等方法。</li>
+<li>最后，我们希望以异步的方式去执行请求，所以我们调用的是call.enqueue，将call加入调度队列，然后等待任务执行完成，我们在Callback中即可得到结果。</li>
+</ol>
+<p>需要注意以下几点：</p>
+<ul>
+<li>nResponse回调的参数是response，一般情况下，比如我们希望获得返回的字符串，可以通过response.body().string()获取；如果希望获得返回的二进制字节数组，则调用response.body().bytes()；如果你想拿到返回的inputStream，则调用response.body().byteStream()</li>
+<li><p>这里支持大文件下载，有inputStream我们就可以通过IO的方式写文件。不过也说明一个问题，这个onResponse执行的线程并不是UI线程。的确是的，如果你希望操作控件，还是需要使用handler等，例如：<br>-</p>
+<p>  @Override<br>  public void onResponse(final Response response) throws IOException<br>  {</p>
+<pre><code>final String res = response.body().string();
+runOnUiThread(new Runnable()
+{
+    @Override
+    public void run()
+    {
+      mTv.setText(res);
+    }
+
+});
+</code></pre><p>  }</p>
+</li>
+</ul>
+<h2 id="Http-Post-携带参数"><a href="#Http-Post-携带参数" class="headerlink" title="Http Post 携带参数"></a>Http Post 携带参数</h2><p>看来上面的简单的get请求，基本上整个的用法也就掌握了，比如post携带参数，也仅仅是Request的构造的不同。</p>
+<pre><code>Request request = buildMultipartFormRequest(
+    url, new File[]{file}, new String[]{fileKey}, null);
+FormEncodingBuilder builder = new FormEncodingBuilder();   
+builder.add(&quot;username&quot;,&quot;罗小贱&quot;);
+
+Request request = new Request.Builder()
+                   .url(url)
+                .post(builder.build())
+                .build();
+ mOkHttpClient.newCall(request).enqueue(new Callback(){});
+</code></pre><p>注：大家都清楚，post的时候，参数是包含在请求体中的；所以我们通过FormEncodingBuilder。添加多个String键值对，然后去构造RequestBody，最后完成我们Request的构造。</p>
+<h2 id="基于Http的文件上传"><a href="#基于Http的文件上传" class="headerlink" title="基于Http的文件上传"></a>基于Http的文件上传</h2><p>可以构造RequestBody的Builder，叫做MultipartBuilder。当我们需要做类似于表单上传的时候，就可以使用它来构造我们的requestBody。</p>
+<pre><code>File file = new File(Environment.getExternalStorageDirectory(), &quot;balabala.mp4&quot;);
+
+RequestBody fileBody = RequestBody.create(MediaType.parse(&quot;application/octet-stream&quot;), file);
+
+RequestBody requestBody = new MultipartBuilder()
+ .type(MultipartBuilder.FORM)
+ .addPart(Headers.of(
+      &quot;Content-Disposition&quot;, 
+          &quot;form-data; name=\&quot;username\&quot;&quot;), 
+      RequestBody.create(null, &quot;罗小贱&quot;))
+ .addPart(Headers.of(
+     &quot;Content-Disposition&quot;, 
+     &quot;form-data; name=\&quot;mFile\&quot;; 
+     filename=\&quot;wjd.mp4\&quot;&quot;), fileBody)
+ .build();
+
+Request request = new Request.Builder()
+.url(&quot;http://192.168.1.103:8080/okHttpServer/fileUpload&quot;)
+.post(requestBody)
+.build();
+
+Call call = mOkHttpClient.newCall(request);
+call.enqueue(new Callback()
+{
+    //...
+});
+</code></pre><p>注：上述代码向服务器传递了一个键值对username:张鸿洋和一个文件。我们通过MultipartBuilder的addPart方法可以添加键值对或者文件。</p>
+<h2 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h2><h3 id="一般的get请求"><a href="#一般的get请求" class="headerlink" title="一般的get请求"></a>一般的get请求</h3><pre><code>OkHttpClientManager.getAsyn(&quot;https://www.baidu.com&quot;, new OkHttpClientManager.ResultCallback&lt;String&gt;()
+    {
+        @Override
+        public void onError(Request request, Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        @Override
+        public void onResponse(String u)
+        {
+            mTv.setText(u);//注意这里是UI线程
+        }
+    });
+</code></pre><p>注：对于一般的请求，我们希望给个url，然后CallBack里面直接操作控件。</p>
+<h3 id="文件上传且携带参数"><a href="#文件上传且携带参数" class="headerlink" title="文件上传且携带参数"></a>文件上传且携带参数</h3><p>提供一个方法，传入url,params,file,callback即可。</p>
+<pre><code>OkHttpClientManager.postAsyn(&quot;http://192.168.1.103:8080/okHttpServer/fileUpload&quot;,//
+new OkHttpClientManager.ResultCallback&lt;String&gt;()
+{
+    @Override
+    public void onError(Request request, IOException e)
+    {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onResponse(String result)
+    {
+
+    }
+},file,&quot;mFile&quot;,
+new OkHttpClientManager.Param[]{
+        new OkHttpClientManager.Param(&quot;username&quot;, &quot;zhy&quot;),
+        new OkHttpClientManager.Param(&quot;password&quot;, &quot;123&quot;)}
+    );
+</code></pre><p>注：键值对没什么说的，参数3为file，参数4为file对应的name，这个name不是文件的名字； 对应于http中的 input type=”file” name=”mFile”对应的是name后面的值，即mFile.</p>
+<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><p>对于文件下载，提供url，目标dir，callback即可。</p>
+<pre><code>OkHttpClientManager.downloadAsyn(
+&quot;http://192.168.1.103:8080/okHttpServer/files/messenger_01.png&quot;,    
+Environment.getExternalStorageDirectory().getAbsolutePath(), 
+new OkHttpClientManager.ResultCallback&lt;String&gt;()
+{
+    @Override
+    public void onError(Request request, IOException e)
+    {
+
+    }
+
+    @Override
+    public void onResponse(String response)
+    {
+        //文件下载成功，这里回调的reponse为文件的absolutePath
+    }
+});
+</code></pre><h3 id="展示图片"><a href="#展示图片" class="headerlink" title="展示图片"></a>展示图片</h3><p>展示图片，我们希望提供一个url和一个imageview，如果下载成功，直接帮我们设置上即可。</p>
+<pre><code>OkHttpClientManager.displayImage(mImageView, 
+ &quot;http://images.csdn.net/20150817/1.jpg&quot;);
+</code></pre><p>注：内部会自动根据imageview的大小自动对图片进行合适的压缩。虽然，这里可能不适合一次性加载大量图片的场景，但是对于app中偶尔有几个图片的加载，还是可用的。</p>
+<h2 id="整合Gson"><a href="#整合Gson" class="headerlink" title="整合Gson"></a>整合Gson</h2><p>很多人提出项目中使用时，服务端返回的是Json字符串，希望客户端回调可以直接拿到对象，于是整合进入了Gson，完善该功能。</p>
+<h3 id="直接回调对象"><a href="#直接回调对象" class="headerlink" title="直接回调对象"></a>直接回调对象</h3><p>例如现在有个User实体类：</p>
+<pre><code>`package com.zhy.utils.http.okhttp;
+
+public class User {
+
+public String username ; 
+public String password  ;
+
+public User() {
+    // TODO Auto-generated constructor stub
+}
+
+public User(String username, String password) {
+    this.username = username;
+    this.password = password;
+}
+
+@Override
+public String toString()
+{
+    return &quot;User{&quot; +
+            &quot;username=&apos;&quot; + username + &apos;\&apos;&apos; +
+            &quot;, password=&apos;&quot; + password + &apos;\&apos;&apos; +
+            &apos;}&apos;;
+        }
+}`
+</code></pre><p>服务端返回：</p>
+<pre><code>{&quot;username&quot;:&quot;zhy&quot;,&quot;password&quot;:&quot;123&quot;}
+</code></pre><p>客户端可以如下方式调用：</p>
+<pre><code>OkHttpClientManager.getAsyn(&quot;http://192.168.56.1:8080/okHttpServer/user!getUser&quot;,
+new OkHttpClientManager.ResultCallback&lt;User&gt;()
+{
+    @Override
+    public void onError(Request request, Exception e)
+    {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onResponse(User user)
+    {
+        mTv.setText(u.toString());//UI线程
+    }
+});
+</code></pre><p>我们传入泛型User，在onResponse里面直接回调User对象。<br>这里特别要注意的事，如果在json字符串-&gt;实体对象过程中发生错误，程序不会崩溃，onError方法会被回调。</p>
+<p>注意：这里做了少许的更新，接口命名从StringCallback修改为ResultCallback。接口中的onFailure方法修改为onError。</p>
+<h3 id="回调对象集合"><a href="#回调对象集合" class="headerlink" title="回调对象集合"></a>回调对象集合</h3><p>依然是上述的User类，服务端返回</p>
+<pre><code>OkHttpClientManager.getAsyn(&quot;http://192.168.56.1:8080/okHttpServer/user!getUsers&quot;,
+new OkHttpClientManager.ResultCallback&lt;List&lt;User&gt;&gt;()
+{
+    @Override
+    public void onError(Request request, Exception e)
+    {
+        e.printStackTrace();
+    }
+    @Override
+    public void onResponse(List&lt;User&gt; us)
+    {
+        Log.e(&quot;TAG&quot;, us.size() + &quot;&quot;);
+        mTv.setText(us.get(1).toString());
+    }
+});
+</code></pre><p>唯一的区别，就是泛型变为List<user> 。</user></p>
+<pre><code>`    package com.zhy.utils.http.okhttp;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.ImageView;
+
+import com.google.gson.Gson;
+import com.google.gson.internal.$Gson$Types;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.MultipartBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.FileNameMap;
+import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Created by zhy on 15/8/17.
+ */
+public class OkHttpClientManager
+{
+private static OkHttpClientManager mInstance;
+private OkHttpClient mOkHttpClient;
+private Handler mDelivery;
+private Gson mGson;
+
+
+private static final String TAG = &quot;OkHttpClientManager&quot;;
+
+private OkHttpClientManager()
+{
+    mOkHttpClient = new OkHttpClient();
+    //cookie enabled
+    mOkHttpClient.setCookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ORIGINAL_SERVER));
+    mDelivery = new Handler(Looper.getMainLooper());
+    mGson = new Gson();
+}
+
+public static OkHttpClientManager getInstance()
+{
+    if (mInstance == null)
+    {
+        synchronized (OkHttpClientManager.class)
+        {
+            if (mInstance == null)
+            {
+                mInstance = new OkHttpClientManager();
+            }
+        }
+    }
+    return mInstance;
+}
+
+/**
+ * 同步的Get请求
+ *
+ * @param url
+ * @return Response
+ */
+private Response _getAsyn(String url) throws IOException
+{
+    final Request request = new Request.Builder()
+            .url(url)
+            .build();
+    Call call = mOkHttpClient.newCall(request);
+    Response execute = call.execute();
+    return execute;
+}
+
+/**
+ * 同步的Get请求
+ *
+ * @param url
+ * @return 字符串
+ */
+private String _getAsString(String url) throws IOException
+{
+    Response execute = _getAsyn(url);
+    return execute.body().string();
+}
+
+
+/**
+ * 异步的get请求
+ *
+ * @param url
+ * @param callback
+ */
+private void _getAsyn(String url, final ResultCallback callback)
+{
+    final Request request = new Request.Builder()
+            .url(url)
+            .build();
+    deliveryResult(callback, request);
+}
+
+
+/**
+ * 同步的Post请求
+ *
+ * @param url
+ * @param params post的参数
+ * @return
+ */
+private Response _post(String url, Param... params) throws IOException
+{
+    Request request = buildPostRequest(url, params);
+    Response response = mOkHttpClient.newCall(request).execute();
+    return response;
+}
+
+
+/**
+ * 同步的Post请求
+ *
+ * @param url
+ * @param params post的参数
+ * @return 字符串
+ */
+private String _postAsString(String url, Param... params) throws IOException
+{
+    Response response = _post(url, params);
+    return response.body().string();
+}
+
+/**
+ * 异步的post请求
+ *
+ * @param url
+ * @param callback
+ * @param params
+ */
+private void _postAsyn(String url, final ResultCallback callback, Param... params)
+{
+    Request request = buildPostRequest(url, params);
+    deliveryResult(callback, request);
+}
+
+/**
+ * 异步的post请求
+ *
+ * @param url
+ * @param callback
+ * @param params
+ */
+private void _postAsyn(String url, final ResultCallback callback, Map&lt;String, String&gt; params)
+{
+    Param[] paramsArr = map2Params(params);
+    Request request = buildPostRequest(url, paramsArr);
+    deliveryResult(callback, request);
+}
+
+/**
+ * 同步基于post的文件上传
+ *
+ * @param params
+ * @return
+ */
+private Response _post(String url, File[] files, String[] fileKeys, Param... params) throws IOException
+{
+    Request request = buildMultipartFormRequest(url, files, fileKeys, params);
+    return mOkHttpClient.newCall(request).execute();
+}
+
+private Response _post(String url, File file, String fileKey) throws IOException
+{
+    Request request = buildMultipartFormRequest(url, new File[]{file}, new String[]{fileKey}, null);
+    return mOkHttpClient.newCall(request).execute();
+}
+
+private Response _post(String url, File file, String fileKey, Param... params) throws IOException
+{
+    Request request = buildMultipartFormRequest(url, new File[]{file}, new String[]{fileKey}, params);
+    return mOkHttpClient.newCall(request).execute();
+}
+
+/**
+ * 异步基于post的文件上传
+ *
+ * @param url
+ * @param callback
+ * @param files
+ * @param fileKeys
+ * @throws IOException
+ */
+private void _postAsyn(String url, ResultCallback callback, File[] files, String[] fileKeys, Param... params) throws IOException
+{
+    Request request = buildMultipartFormRequest(url, files, fileKeys, params);
+    deliveryResult(callback, request);
+}
+
+/**
+ * 异步基于post的文件上传，单文件不带参数上传
+ *
+ * @param url
+ * @param callback
+ * @param file
+ * @param fileKey
+ * @throws IOException
+ */
+private void _postAsyn(String url, ResultCallback callback, File file, String fileKey) throws IOException
+{
+    Request request = buildMultipartFormRequest(url, new File[]{file}, new String[]{fileKey}, null);
+    deliveryResult(callback, request);
+}
+
+/**
+ * 异步基于post的文件上传，单文件且携带其他form参数上传
+ *
+ * @param url
+ * @param callback
+ * @param file
+ * @param fileKey
+ * @param params
+ * @throws IOException
+ */
+private void _postAsyn(String url, ResultCallback callback, File file, String fileKey, Param... params) throws IOException
+{
+    Request request = buildMultipartFormRequest(url, new File[]{file}, new String[]{fileKey}, params);
+    deliveryResult(callback, request);
+}
+
+/**
+ * 异步下载文件
+ *
+ * @param url
+ * @param destFileDir 本地文件存储的文件夹
+ * @param callback
+ */
+private void _downloadAsyn(final String url, final String destFileDir, final ResultCallback callback)
+{
+    final Request request = new Request.Builder()
+            .url(url)
+            .build();
+    final Call call = mOkHttpClient.newCall(request);
+    call.enqueue(new Callback()
+    {
+        @Override
+        public void onFailure(final Request request, final IOException e)
+        {
+            sendFailedStringCallback(request, e, callback);
+        }
+
+        @Override
+        public void onResponse(Response response)
+        {
+            InputStream is = null;
+            byte[] buf = new byte[2048];
+            int len = 0;
+            FileOutputStream fos = null;
+            try
+            {
+                is = response.body().byteStream();
+                File file = new File(destFileDir, getFileName(url));
+                fos = new FileOutputStream(file);
+                while ((len = is.read(buf)) != -1)
+                {
+                    fos.write(buf, 0, len);
+                }
+                fos.flush();
+                //如果下载文件成功，第一个参数为文件的绝对路径
+                sendSuccessResultCallback(file.getAbsolutePath(), callback);
+            } catch (IOException e)
+            {
+                sendFailedStringCallback(response.request(), e, callback);
+            } finally
+            {
+                try
+                {
+                    if (is != null) is.close();
+                } catch (IOException e)
+                {
+                }
+                try
+                {
+                    if (fos != null) fos.close();
+                } catch (IOException e)
+                {
+                }
+            }
+
+        }
+    });
+}
+
+private String getFileName(String path)
+{
+    int separatorIndex = path.lastIndexOf(&quot;/&quot;);
+    return (separatorIndex &lt; 0) ? path : path.substring(separatorIndex + 1, path.length());
+}
+
+/**
+ * 加载图片
+ *
+ * @param view
+ * @param url
+ * @throws IOException
+ */
+private void _displayImage(final ImageView view, final String url, final int errorResId)
+{
+    final Request request = new Request.Builder()
+            .url(url)
+            .build();
+    Call call = mOkHttpClient.newCall(request);
+    call.enqueue(new Callback()
+    {
+        @Override
+        public void onFailure(Request request, IOException e)
+        {
+            setErrorResId(view, errorResId);
+        }
+
+        @Override
+        public void onResponse(Response response)
+        {
+            InputStream is = null;
+            try
+            {
+                is = response.body().byteStream();
+                ImageUtils.ImageSize actualImageSize = ImageUtils.getImageSize(is);
+                ImageUtils.ImageSize imageViewSize = ImageUtils.getImageViewSize(view);
+                int inSampleSize = ImageUtils.calculateInSampleSize(actualImageSize, imageViewSize);
+                try
+                {
+                    is.reset();
+                } catch (IOException e)
+                {
+                    response = _getAsyn(url);
+                    is = response.body().byteStream();
+                }
+
+                BitmapFactory.Options ops = new BitmapFactory.Options();
+                ops.inJustDecodeBounds = false;
+                ops.inSampleSize = inSampleSize;
+                final Bitmap bm = BitmapFactory.decodeStream(is, null, ops);
+                mDelivery.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        view.setImageBitmap(bm);
+                    }
+                });
+            } catch (Exception e)
+            {
+                setErrorResId(view, errorResId);
+
+            } finally
+            {
+                if (is != null) try
+                {
+                    is.close();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+    });
+
+
+}
+
+private void setErrorResId(final ImageView view, final int errorResId)
+{
+    mDelivery.post(new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            view.setImageResource(errorResId);
+        }
+    });
+}
+
+
+//*************对外公布的方法************
+
+
+public static Response getAsyn(String url) throws IOException
+{
+    return getInstance()._getAsyn(url);
+}
+
+
+public static String getAsString(String url) throws IOException
+{
+    return getInstance()._getAsString(url);
+}
+
+public static void getAsyn(String url, ResultCallback callback)
+{
+    getInstance()._getAsyn(url, callback);
+}
+
+public static Response post(String url, Param... params) throws IOException
+{
+    return getInstance()._post(url, params);
+}
+
+public static String postAsString(String url, Param... params) throws IOException
+{
+    return getInstance()._postAsString(url, params);
+}
+
+public static void postAsyn(String url, final ResultCallback callback, Param... params)
+{
+    getInstance()._postAsyn(url, callback, params);
+}
+
+
+public static void postAsyn(String url, final ResultCallback callback, Map&lt;String, String&gt; params)
+{
+    getInstance()._postAsyn(url, callback, params);
+}
+
+
+public static Response post(String url, File[] files, String[] fileKeys, Param... params) throws IOException
+{
+    return getInstance()._post(url, files, fileKeys, params);
+}
+
+public static Response post(String url, File file, String fileKey) throws IOException
+{
+    return getInstance()._post(url, file, fileKey);
+}
+
+public static Response post(String url, File file, String fileKey, Param... params) throws IOException
+{
+    return getInstance()._post(url, file, fileKey, params);
+}
+
+public static void postAsyn(String url, ResultCallback callback, File[] files, String[] fileKeys, Param... params) throws IOException
+{
+    getInstance()._postAsyn(url, callback, files, fileKeys, params);
+}
+
+
+public static void postAsyn(String url, ResultCallback callback, File file, String fileKey) throws IOException
+{
+    getInstance()._postAsyn(url, callback, file, fileKey);
+}
+
+
+public static void postAsyn(String url, ResultCallback callback, File file, String fileKey, Param... params) throws IOException
+{
+    getInstance()._postAsyn(url, callback, file, fileKey, params);
+}
+
+public static void displayImage(final ImageView view, String url, int errorResId) throws IOException
+{
+    getInstance()._displayImage(view, url, errorResId);
+}
+
+
+public static void displayImage(final ImageView view, String url)
+{
+    getInstance()._displayImage(view, url, -1);
+}
+
+public static void downloadAsyn(String url, String destDir, ResultCallback callback)
+{
+    getInstance()._downloadAsyn(url, destDir, callback);
+}
+
+//****************************
+
+
+private Request buildMultipartFormRequest(String url, File[] files,
+                                          String[] fileKeys, Param[] params)
+{
+    params = validateParam(params);
+
+    MultipartBuilder builder = new MultipartBuilder()
+            .type(MultipartBuilder.FORM);
+
+    for (Param param : params)
+    {
+        builder.addPart(Headers.of(&quot;Content-Disposition&quot;, &quot;form-data; name=\&quot;&quot; + param.key + &quot;\&quot;&quot;),
+                RequestBody.create(null, param.value));
+    }
+    if (files != null)
+    {
+        RequestBody fileBody = null;
+        for (int i = 0; i &lt; files.length; i++)
+        {
+            File file = files[i];
+            String fileName = file.getName();
+            fileBody = RequestBody.create(MediaType.parse(guessMimeType(fileName)), file);
+            //TODO 根据文件名设置contentType
+            builder.addPart(Headers.of(&quot;Content-Disposition&quot;,
+                            &quot;form-data; name=\&quot;&quot; + fileKeys[i] + &quot;\&quot;; filename=\&quot;&quot; + fileName + &quot;\&quot;&quot;),
+                    fileBody);
+        }
+    }
+
+    RequestBody requestBody = builder.build();
+    return new Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build();
+}
+
+private String guessMimeType(String path)
+{
+    FileNameMap fileNameMap = URLConnection.getFileNameMap();
+    String contentTypeFor = fileNameMap.getContentTypeFor(path);
+    if (contentTypeFor == null)
+    {
+        contentTypeFor = &quot;application/octet-stream&quot;;
+    }
+    return contentTypeFor;
+}
+
+
+private Param[] validateParam(Param[] params)
+{
+    if (params == null)
+        return new Param[0];
+    else return params;
+}
+
+private Param[] map2Params(Map&lt;String, String&gt; params)
+{
+    if (params == null) return new Param[0];
+    int size = params.size();
+    Param[] res = new Param[size];
+    Set&lt;Map.Entry&lt;String, String&gt;&gt; entries = params.entrySet();
+    int i = 0;
+    for (Map.Entry&lt;String, String&gt; entry : entries)
+    {
+        res[i++] = new Param(entry.getKey(), entry.getValue());
+    }
+    return res;
+}
+
+private static final String SESSION_KEY = &quot;Set-Cookie&quot;;
+private static final String mSessionKey = &quot;JSESSIONID&quot;;
+
+private Map&lt;String, String&gt; mSessions = new HashMap&lt;String, String&gt;();
+
+private void deliveryResult(final ResultCallback callback, Request request)
+{
+    mOkHttpClient.newCall(request).enqueue(new Callback()
+    {
+        @Override
+        public void onFailure(final Request request, final IOException e)
+        {
+            sendFailedStringCallback(request, e, callback);
+        }
+
+        @Override
+        public void onResponse(final Response response)
+        {
+            try
+            {
+                final String string = response.body().string();
+                if (callback.mType == String.class)
+                {
+                    sendSuccessResultCallback(string, callback);
+                } else
+                {
+                    Object o = mGson.fromJson(string, callback.mType);
+                    sendSuccessResultCallback(o, callback);
+                }
+
+
+            } catch (IOException e)
+            {
+                sendFailedStringCallback(response.request(), e, callback);
+            } catch (com.google.gson.JsonParseException e)//Json解析的错误
+            {
+                sendFailedStringCallback(response.request(), e, callback);
+            }
+
+        }
+    });
+}
+
+private void sendFailedStringCallback(final Request request, final Exception e, final ResultCallback callback)
+{
+    mDelivery.post(new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            if (callback != null)
+                callback.onError(request, e);
+        }
+    });
+}
+
+private void sendSuccessResultCallback(final Object object, final ResultCallback callback)
+{
+    mDelivery.post(new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            if (callback != null)
+            {
+                callback.onResponse(object);
+            }
+        }
+    });
+}
+
+private Request buildPostRequest(String url, Param[] params)
+{
+    if (params == null)
+    {
+        params = new Param[0];
+    }
+    FormEncodingBuilder builder = new FormEncodingBuilder();
+    for (Param param : params)
+    {
+        builder.add(param.key, param.value);
+    }
+    RequestBody requestBody = builder.build();
+    return new Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build();
+}
+
+
+public static abstract class ResultCallback&lt;T&gt;
+{
+    Type mType;
+
+    public ResultCallback()
+    {
+        mType = getSuperclassTypeParameter(getClass());
+    }
+
+    static Type getSuperclassTypeParameter(Class&lt;?&gt; subclass)
+    {
+        Type superclass = subclass.getGenericSuperclass();
+        if (superclass instanceof Class)
+        {
+            throw new RuntimeException(&quot;Missing type parameter.&quot;);
+        }
+        ParameterizedType parameterized = (ParameterizedType) superclass;
+        return $Gson$Types.canonicalize(parameterized.getActualTypeArguments()[0]);
+    }
+
+    public abstract void onError(Request request, Exception e);
+
+    public abstract void onResponse(T response);
+}
+
+public static class Param
+{
+    public Param()
+    {
+    }
+
+    public Param(String key, String value)
+    {
+        this.key = key;
+        this.value = value;
+    }
+
+    String key;
+    String value;
+    }
+}`
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/关于OkHttp的基本使用/" data-id="cizf6szdy004tloo5tsx0n3x0" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OkHttp/">OkHttp</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/图片的二级缓存/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          图片的二级缓存
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/21/关于OkHttp/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">关于OkHttp的基本使用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android-Studio/">Android Studio</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android案例/">Android案例</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android知识点/">Android知识点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android第三方库/">Android第三方库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android重点/">Android重点</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android错误/">Android错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android面试/">Android面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bmob/">Bmob</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSDN博客/">CSDN博客</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Handler/">Handler</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo教程/">Hexo教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Http/">Http</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java面试/">Java面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Jsoup/">Jsoup</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Looper/">Looper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OOM解决方案/">OOM解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RxJava/">RxJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/命令总结/">命令总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/堆和栈/">堆和栈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/学习辅助工具/">学习辅助工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/常见错误/">常见错误</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/百度地图/">百度地图</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存机制/">缓存机制</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解决方案/">解决方案</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/项目SDK/">项目SDK</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-Studio/">Android Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android加载图片/">Android加载图片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android错误/">Android错误</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android面试/">Android面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bmob/">Bmob</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客/">CSDN博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fragment/">Fragment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Handler/">Handler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Http/">Http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsoup/">Jsoup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Looper/">Looper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVC/">MVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDownPad2/">MarkDownPad2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OkHttp/">OkHttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RxJava/">RxJava</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SharedPreferences/">SharedPreferences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sqlite/">Sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Studio/">Studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View绘制/">View绘制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/assets/">assets</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlite/">sqlite</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下拉-上拉刷新/">下拉/上拉刷新</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/个推/">个推</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆和栈/">堆和栈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/快捷键/">快捷键</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/注册码/">注册码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/状态栏/">状态栏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统分享/">系统分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程/">线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络协议/">网络协议</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义/">自定义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义栏目/">自定义栏目</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio/" style="font-size: 12.5px;">Android Studio</a> <a href="/tags/Android加载图片/" style="font-size: 10px;">Android加载图片</a> <a href="/tags/Android错误/" style="font-size: 17.5px;">Android错误</a> <a href="/tags/Android面试/" style="font-size: 10px;">Android面试</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Bmob/" style="font-size: 10px;">Bmob</a> <a href="/tags/CSDN博客/" style="font-size: 10px;">CSDN博客</a> <a href="/tags/Fragment/" style="font-size: 12.5px;">Fragment</a> <a href="/tags/Handler/" style="font-size: 10px;">Handler</a> <a href="/tags/Hexo/" style="font-size: 12.5px;">Hexo</a> <a href="/tags/Http/" style="font-size: 10px;">Http</a> <a href="/tags/JAVA/" style="font-size: 12.5px;">JAVA</a> <a href="/tags/Java/" style="font-size: 12.5px;">Java</a> <a href="/tags/Jsoup/" style="font-size: 10px;">Jsoup</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Looper/" style="font-size: 10px;">Looper</a> <a href="/tags/MVC/" style="font-size: 10px;">MVC</a> <a href="/tags/MVP/" style="font-size: 10px;">MVP</a> <a href="/tags/MarkDownPad2/" style="font-size: 10px;">MarkDownPad2</a> <a href="/tags/OkHttp/" style="font-size: 12.5px;">OkHttp</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/SharedPreferences/" style="font-size: 10px;">SharedPreferences</a> <a href="/tags/Sqlite/" style="font-size: 10px;">Sqlite</a> <a href="/tags/Studio/" style="font-size: 10px;">Studio</a> <a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a> <a href="/tags/View绘制/" style="font-size: 10px;">View绘制</a> <a href="/tags/assets/" style="font-size: 10px;">assets</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/下拉-上拉刷新/" style="font-size: 10px;">下拉/上拉刷新</a> <a href="/tags/个推/" style="font-size: 10px;">个推</a> <a href="/tags/博客/" style="font-size: 15px;">博客</a> <a href="/tags/堆和栈/" style="font-size: 10px;">堆和栈</a> <a href="/tags/快捷键/" style="font-size: 10px;">快捷键</a> <a href="/tags/注册码/" style="font-size: 10px;">注册码</a> <a href="/tags/状态栏/" style="font-size: 10px;">状态栏</a> <a href="/tags/系统分享/" style="font-size: 10px;">系统分享</a> <a href="/tags/线程/" style="font-size: 10px;">线程</a> <a href="/tags/网络协议/" style="font-size: 10px;">网络协议</a> <a href="/tags/自定义/" style="font-size: 10px;">自定义</a> <a href="/tags/自定义栏目/" style="font-size: 10px;">自定义栏目</a> <a href="/tags/面试/" style="font-size: 12.5px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/02/21/轮播条（一）/">轮播条广告位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/调用系统本身的分享功能/">Android调用系统本身的分享功能</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/获取控件的高度/">Android开发之View宽和高的获取</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/自定义View、ViewGroup、控件/">自定义View、ViewGroup、控件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/21/缓存机制的应用/">缓存机制的应用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
